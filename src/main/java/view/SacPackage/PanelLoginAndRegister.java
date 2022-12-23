@@ -7,6 +7,7 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -18,7 +19,10 @@ import map.Uzytkownik;
 // Brane z maven
 import net.miginfocom.swing.MigLayout;
 // Klasy rozszerzające
+import view.SacPackage.Button;
 import view.MainFrame;
+import view.SacPackage.MyPasswordField;
+import view.SacPackage.MyTextField;
 /**
  *
  * @author gs
@@ -52,6 +56,16 @@ public class PanelLoginAndRegister extends JPanel {
         txtUser.setHint("Nazwa użytkownika");
         register.add(txtUser, "w 60%");
         
+        MyTextField txtname = new MyTextField();
+        txtname.setPrefixIcon(new ImageIcon("user_login.png"));
+        txtname.setHint("Imie");
+        register.add(txtname, "w 60%");
+        
+        MyTextField txtsurname = new MyTextField();
+        txtsurname.setPrefixIcon(new ImageIcon("user_login.png"));
+        txtsurname.setHint("Nazwisko");
+        register.add(txtsurname, "w 60%");
+        
         MyTextField txtEmail = new MyTextField();
         txtEmail.setPrefixIcon(new ImageIcon("email.png"));
         txtEmail.setHint("E-mail");
@@ -62,11 +76,32 @@ public class PanelLoginAndRegister extends JPanel {
         txtPassReg.setHint("Hasło");
         register.add(txtPassReg, "w 60%");
         
+        view.MyPasswordField txtPass2 = new view.MyPasswordField();
+        txtPass2.setPrefixIcon(new ImageIcon("password.png"));
+        txtPass2.setHint("Powtorz haslo");
+        register.add(txtPass2, "w 60%");
+        
         Button cmd = new Button();
         cmd.setBackground(new Color(196, 53, 53));
         cmd.setForeground(new Color(250, 250, 250));
         cmd.setText("Stwórz konto");
         register.add(cmd, "w 40%, h 40");
+        
+                cmd.addActionListener(new ActionListener() {    // narazie po wciśnięciu przycisku "Zaloguj się" przechodzi do sklepu!! //juz nie
+            public void actionPerformed(ActionEvent e) {
+                
+                UzytkownikDao dao = new UzytkownikDao();
+                Uzytkownik user = new Uzytkownik();
+                String login = txtUser.getText(), pass = txtPassReg.getText(), name = txtname.getText(), surname = txtsurname.getText(), email = txtEmail.getText(), pass2 = txtPass2.getText();
+                if(!"".equals(login) && !"".equals(pass) && !"".equals(name) && !"".equals(surname) && !"".equals(email) && pass.equals(pass2) )
+                {
+                    user = dao.addUser(name,  surname,  login,   pass, new Date(),  email );
+
+                   //user = dao.getUser(pass, login);
+                   
+                }
+            }
+        });
     }
     
     private void initLogin() {
