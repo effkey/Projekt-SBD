@@ -76,7 +76,7 @@ public class PanelLoginAndRegister extends JPanel {
         txtPassReg.setHint("Hasło");
         register.add(txtPassReg, "w 60%");
         
-        view.MyPasswordField txtPass2 = new view.MyPasswordField();
+        MyPasswordField txtPass2 = new MyPasswordField();
         txtPass2.setPrefixIcon(new ImageIcon("password.png"));
         txtPass2.setHint("Powtorz haslo");
         register.add(txtPass2, "w 60%");
