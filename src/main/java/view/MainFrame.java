@@ -1,0 +1,410 @@
+package view;
+
+import view.SacPackage.PanelCover;
+import view.SacPackage.PanelLoginAndRegister;
+import view.layouts.Details;
+import view.layouts.ShopLayout;
+import javax.swing.JFrame;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+import javax.swing.JPanel;
+// Brane z maven
+import net.miginfocom.swing.MigLayout;  // aby łatwiej robić layouty
+import org.jdesktop.animation.timing.TimingTarget;
+import org.jdesktop.animation.timing.TimingTargetAdapter;
+import org.jdesktop.animation.timing.Animator;
+// Brane z zewnętrznych klas
+import map.Kategoria;
+import map.Producent;
+import map.Produkt;
+import map.Uzytkownik;
+import map.Zamowienie;
+import view.layouts.CartLayout;
+import view.layouts.NewProduct;
+
+public class MainFrame extends javax.swing.JFrame {     // główny main na dole
+
+    public static org.hibernate.Session session;
+
+    private Uzytkownik user;
+    private MigLayout layout;
+    private PanelCover cover;
+    private PanelLoginAndRegister loginAndRegister;
+    private boolean isLogin;
+    private final double addSize = 30;
+    private final double coverSize = 40;
+    private final double loginSize = 60;
+    private final DecimalFormat df = new DecimalFormat("##0.###", DecimalFormatSymbols.getInstance(Locale.US));  // patrz fractionCover = Double... , po prostu inaczej nie działało
+
+    // Z ShopFrame
+    private JPanel[] panels; //0-shopLayout  1-tymczasowe  2-koszyk
+    //
+
+    public MainFrame() {
+        this.setResizable(false);
+        this.panels = new JPanel[3];
+        initComponents();
+        init();
+    }
+    
+
+// Z ShopFrame
+    public void showProductPanel(Produkt produkt) {
+        this.panels[1] = new Details(produkt, user.isUprawnieniaAdministratora());
+        this.panels[0].setVisible(false);
+        this.add(panels[1]);
+    }
+
+    public void returnToShop() {
+        this.remove(this.panels[1]);
+        this.panels[0].setVisible(true);
+    }
+    
+    public void returnToShopFromCart() {
+        this.panels[2].setVisible(false);
+        this.panels[0].setVisible(true);
+    }
+
+    public void showLogInPanel() {
+        this.getContentPane().removeAll();
+        this.isLogin = false;
+        initComponents();
+        init();
+        setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);   // Fullscreen
+    }
+
+    public void showNewProduct() {
+        this.panels[0].setVisible(false);
+        this.panels[1] = new NewProduct();
+        this.add(panels[1]);
+    }
+
+    public void showCart() {
+        this.add(this.panels[2]);
+        this.panels[0].setVisible(false);
+        this.panels[2].setVisible(true);
+    }
+    
+    public void addProductToCart(Produkt produkt){
+        CartLayout panel = (CartLayout) this.panels[2];
+        panel.addProduct(produkt);
+    }
+
+    public void loadPanels(Uzytkownik user) {
+        this.user = user;
+        this.panels[0] = new ShopLayout(user.isUprawnieniaAdministratora());
+        this.panels[2] = new CartLayout();
+        this.add(this.panels[2]);
+        this.panels[2].setVisible(false);
+        this.add(this.panels[0]);
+        test();
+    }
+
+    private void test() {
+        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
+                "Pamięć Kingston FURY™ Beast DDR5 oferuje najnowszą i najbardziej zaawansowaną technologię dla platform do gier nowej generacji. "
+                + "Zapewniając jeszcze większą szybkość, pojemność i niezawodność, pamięć DDR5 oferuje wiele udoskonalonych rozwiązań, takich jak: "
+                + "wbudowany układ ECC (ODECC), który odpowiada za lepszą stabilność przy ekstremalnych szybkościach, dwa 32-bitowe podkanały "
+                + "zwiększające wydajność oraz wbudowany układ zarządzania energią (PMIC), aby dostarczyć ją tam, gdzie jest najbardziej potrzebna.\r\n"
+                + "\r\n"
+                + "Niezależnie od tego, czy przesuwasz granice w grze, wybierając najwyższe ustawienia, streamujesz na żywo w rozdzielczości 4K+, "
+                + "czy pracujesz nad dużymi animacjami z renderowaniem 3D, pamięć Kingston FURY Beast DDR5 pozwoli Ci się wznieść na odpowiedni poziom, "
+                + "łącząc efektowny wygląd z bezkompromisową wydajnością.",
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
+        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
+                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
+                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
+                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
+        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
+                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
+                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
+                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
+        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
+                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
+                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
+                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
+        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
+                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
+                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
+                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
+        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
+                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
+                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
+                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
+        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
+                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
+                + "\r\n"
+                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
+                + "\r\n"
+                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
+        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
+                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
+                + "\r\n"
+                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
+                + "\r\n"
+                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
+        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
+                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
+                + "\r\n"
+                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
+                + "\r\n"
+                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
+        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
+                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
+                + "\r\n"
+                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
+                + "\r\n"
+                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
+        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
+                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
+                + "\r\n"
+                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
+                + "\r\n"
+                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
+        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
+                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
+                + "\r\n"
+                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
+                + "\r\n"
+                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
+        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
+                "Pamięć Kingston FURY™ Beast DDR5 oferuje najnowszą i najbardziej zaawansowaną technologię dla platform do gier nowej generacji. "
+                + "Zapewniając jeszcze większą szybkość, pojemność i niezawodność, pamięć DDR5 oferuje wiele udoskonalonych rozwiązań, takich jak: "
+                + "wbudowany układ ECC (ODECC), który odpowiada za lepszą stabilność przy ekstremalnych szybkościach, dwa 32-bitowe podkanały "
+                + "zwiększające wydajność oraz wbudowany układ zarządzania energią (PMIC), aby dostarczyć ją tam, gdzie jest najbardziej potrzebna.\r\n"
+                + "\r\n"
+                + "Niezależnie od tego, czy przesuwasz granice w grze, wybierając najwyższe ustawienia, streamujesz na żywo w rozdzielczości 4K+, "
+                + "czy pracujesz nad dużymi animacjami z renderowaniem 3D, pamięć Kingston FURY Beast DDR5 pozwoli Ci się wznieść na odpowiedni poziom, "
+                + "łącząc efektowny wygląd z bezkompromisową wydajnością.",
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
+        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
+                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
+                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
+                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
+        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
+                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
+                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
+                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
+        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
+                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
+                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
+                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
+        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
+                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
+                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
+                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
+        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
+                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
+                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
+                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
+        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
+                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
+                + "\r\n"
+                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
+                + "\r\n"
+                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
+        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
+                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
+                + "\r\n"
+                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
+                + "\r\n"
+                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
+    }
+    //
+
+    private void init() {
+        layout = new MigLayout("fill, insets 0");    // insets 0 aby nie było dziwnych odstępów np. od panel covera, można też po insets dopisać ",debug" aby zobaczyć krawędzie layoutu
+        cover = new PanelCover();
+        loginAndRegister = new PanelLoginAndRegister();
+        TimingTarget target = new TimingTargetAdapter() {
+            @Override
+            public void timingEvent(float fraction) {
+                double fractionCover;
+                double fractionLogin;
+                double size = coverSize;
+
+                if (fraction <= 0.5f) {
+                    size += fraction * addSize;
+                } else {
+                    size += addSize - fraction * addSize;
+                }
+
+                if (isLogin) {
+                    fractionCover = 1f - fraction;
+                    fractionLogin = fraction;
+                    if (fraction >= 0.5f) {
+                        cover.registerRight(fractionCover * 100);
+                    } else {
+                        cover.loginRight(fractionLogin * 100);
+                    }
+                } else {
+                    fractionCover = fraction;
+                    fractionLogin = 1f - fraction;
+                    if (fraction <= 0.5f) {
+                        cover.registerLeft(fraction * 100);
+                    } else {
+                        cover.loginLeft((1f - fraction) * 100);
+                    }
+                }
+
+                if (fraction >= 0.5f) {
+                    loginAndRegister.showRegister(isLogin);
+                }
+
+                fractionCover = Double.valueOf(df.format(fractionCover));
+                fractionLogin = Double.valueOf(df.format(fractionLogin));
+                layout.setComponentConstraints(cover, "width " + size + "%, pos " + fractionCover + "al 0 n 100%");
+                layout.setComponentConstraints(loginAndRegister, "width " + loginSize + "%, pos " + fractionLogin + "al 0 n 100%");
+                Background.revalidate();
+            }
+
+            @Override
+            public void end() {
+                isLogin = !isLogin;
+            }
+        };
+
+        final Animator animator = new Animator(800, target);   // java kazało mi tu zrobić final bo jest głupia - ale może tak nie powinno być??
+        animator.setAcceleration(0.5f);
+        animator.setDeceleration(0.5f);
+        animator.setResolution(0);  // aby była płynna animacja i nie dostać oczopląsu
+        Background.setLayout(layout);
+        Background.add(cover, "width " + coverSize + "%, pos 0al 0 n 100%");
+        Background.add(loginAndRegister, "width " + loginSize + "%, pos 1al 0 n 100%"); // 1al - 100%
+        cover.addEvent(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                if (!animator.isRunning()) {     // jeśli nie trwa aktualnie żadna animacja, rozpocznij nową
+                    animator.start();
+                }
+            }
+        });
+    }
+
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        Background = new javax.swing.JLayeredPane();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+        Background.setBackground(new java.awt.Color(255, 255, 255));
+        Background.setOpaque(true);
+
+        javax.swing.GroupLayout BackgroundLayout = new javax.swing.GroupLayout(Background);
+        Background.setLayout(BackgroundLayout);
+        BackgroundLayout.setHorizontalGroup(
+            BackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        BackgroundLayout.setVerticalGroup(
+            BackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(Background)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(Background)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+//        try {
+//	    org.hibernate.Transaction chuj = session.beginTransaction();
+        //chuj.begin();
+//	    Kategoria kategoria = new Kategoria("Pawlak1", "karz2el");
+//            session.save(kategoria);
+//            Kategoria kategoria2 = new Kategoria("dorosz", "karz2e213l");
+//            session.save(kategoria2);
+//            Kategoria kategoria3 = new Kategoria("denert", "kaczka");
+//            session.save(kategoria3);
+//            Producent producent = new Producent("TAK", " Kraj", "ptok");
+//            session.save(producent);
+//            Produkt produkt = new Produkt("dupa", 55,"pomocy",5, kategoria, producent, 15, "kwiat1");
+//            session.save(produkt);
+//            Produkt produkt2 = new Produkt("pupa", 42,"pomocy",5, kategoria2, producent, 15, "kwiat1");
+//            session.save(produkt2);
+//            Produkt produkt3 = new Produkt("grzes", 15,"pomocy",5, kategoria2, producent, 15, "kwiat1");
+//            session.save(produkt3);
+//            System.out.print("UDALO SIE HIHIHI ");
+//          System.out.print(" " + kategoria.getIdKategoria());
+//          chuj.commit();
+
+//	} catch (Exception e) {
+//	    System.out.print("NIE WIEM CO SIE DZIEJE ALE BUJA ");
+//	    e.printStackTrace();
+//	}
+        try {
+
+            // HIBERNATE
+//            StandardServiceRegistry ssr = new StandardServiceRegistryBuilder().configure("hibernate.cfg.xml").build();
+//	    Metadata meta = new MetadataSources(ssr).getMetadataBuilder().build();
+//	    org.hibernate.SessionFactory factory = meta.getSessionFactoryBuilder().build();
+//	    MainFrame.session = factory.openSession();
+            // HIBERNATE
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                MainFrame mainframe = new MainFrame();
+                mainframe.setVisible(true);
+                mainframe.setExtendedState(mainframe.getExtendedState() | JFrame.MAXIMIZED_BOTH);   // Fullscreen
+                mainframe.setIconImage(Image.LOGO.icon.getImage());
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLayeredPane Background;
+    // End of variables declaration//GEN-END:variables
+}
