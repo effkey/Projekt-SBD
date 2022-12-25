@@ -22,7 +22,6 @@ import map.Producent;
 import map.Produkt;
 import map.Uzytkownik;
 import map.Zamowienie;
-import view.SacPackage.OrderPanel;
 import view.layouts.CartLayout;
 import view.layouts.NewProduct;
 
@@ -45,46 +44,25 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
     //
 
     public MainFrame() {
-        this.setTitle("Hardware Shop");
         this.setResizable(false);
         this.panels = new JPanel[3];
         initComponents();
         init();
     }
+    
 
 // Z ShopFrame
-    public void refreshCategoryPanel(){
-        CartLayout tmp = (CartLayout)this.panels[2];
-        tmp.refreshCategoryPanel();
-    }
     public void showProductPanel(Produkt produkt) {
-        this.panels[1] = new Details(produkt, user.isUprawnieniaAdministratora(), false);
+        this.panels[1] = new Details(produkt, user.isUprawnieniaAdministratora());
         this.panels[0].setVisible(false);
         this.add(panels[1]);
-    }
-
-    public void showProductPanelCart(Produkt produkt) {
-        this.panels[1] = new Details(produkt, user.isUprawnieniaAdministratora(), true);
-        this.panels[2].setVisible(false);
-        this.add(panels[1]);
-    }
-    
-    public void showCompleteOrder() {
-        this.panels[2].setVisible(false);
-        this.panels[1] = new OrderPanel();
-        this.add(panels[1]);
-    }
-
-    public void returnToCart() {
-        this.remove(this.panels[1]);
-        this.panels[2].setVisible(true);
     }
 
     public void returnToShop() {
         this.remove(this.panels[1]);
         this.panels[0].setVisible(true);
     }
-
+    
     public void returnToShopFromCart() {
         this.panels[2].setVisible(false);
         this.panels[0].setVisible(true);
@@ -109,8 +87,8 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
         this.panels[0].setVisible(false);
         this.panels[2].setVisible(true);
     }
-
-    public void addProductToCart(Produkt produkt) {
+    
+    public void addProductToCart(Produkt produkt){
         CartLayout panel = (CartLayout) this.panels[2];
         panel.addProduct(produkt);
     }
@@ -135,14 +113,12 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
                 + "Niezależnie od tego, czy przesuwasz granice w grze, wybierając najwyższe ustawienia, streamujesz na żywo w rozdzielczości 4K+, "
                 + "czy pracujesz nad dużymi animacjami z renderowaniem 3D, pamięć Kingston FURY Beast DDR5 pozwoli Ci się wznieść na odpowiedni poziom, "
                 + "łącząc efektowny wygląd z bezkompromisową wydajnością.",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg").setIdProduktu(0));
-        
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
         ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
                 "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
                 + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
                 + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg").setIdProduktu(1));
-        
+                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
         ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
                 "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
                 + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
@@ -248,97 +224,6 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
                 + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
                 0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
         ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
-                + "\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((CartLayout) this.panels[2]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
-                + "\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((CartLayout) this.panels[2]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
-                + "\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((CartLayout) this.panels[2]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
-                + "\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((CartLayout) this.panels[2]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
-                + "\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((CartLayout) this.panels[2]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
-                + "\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((CartLayout) this.panels[2]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
-                + "\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((CartLayout) this.panels[2]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
-                + "\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((CartLayout) this.panels[2]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
-                + "\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((CartLayout) this.panels[2]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
-                + "\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((CartLayout) this.panels[2]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
-                + "\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((CartLayout) this.panels[2]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
-                + "\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((CartLayout) this.panels[2]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
-                + "\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((CartLayout) this.panels[2]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
                 "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
                 + "\r\n"
                 + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
