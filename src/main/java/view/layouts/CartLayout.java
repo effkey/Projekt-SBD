@@ -3,9 +3,14 @@ package view.layouts;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -18,7 +23,7 @@ import javax.swing.text.View;
 import map.Produkt;
 import view.Image;
 import view.MainFrame;
-
+import static view.layouts.ShopLayout.borderPx;
 
 public class CartLayout extends JPanel implements ActionListener {
 
@@ -30,26 +35,27 @@ public class CartLayout extends JPanel implements ActionListener {
     private JPanel upPanel;
     private JButton returnButton;
     private JLabel logo;
+    private JButton complete;
 
     private JPanel categoryPanel = new JPanel();
-    private JComboBox cardinality;
-    private JComboBox category;
+    JLabel quantity;
+    JLabel sum;
 
     public CartLayout() {
         this.setLayout(null);
 
-        this.setPreferredSize(new Dimension((int) (Toolkit.getDefaultToolkit().getScreenSize().width * 0.998), (int) (Toolkit.getDefaultToolkit().getScreenSize().height * 0.998)));
+        this.setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
         this.setBackground(Color.WHITE);
 
-        this.upPanel = new JPanel();
-        this.categoryPanel = new JPanel() {
-//            @Override
-//            public void paintComponent(Graphics g) {
-//                super.paintComponent(g);
-//                Graphics2D g2d = (Graphics2D) g;
-//                g2d.drawImage(Image.LOGO.icon.getImage(), borderPx, this.getPreferredSize().height - borderPx, null);
-//            }
+        this.upPanel = new JPanel() {
+            @Override
+            public void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.drawImage(Image.LOGO.icon.getImage(), Toolkit.getDefaultToolkit().getScreenSize().width / 2 - 7 * borderPx, -borderPx, null);
+            }
         };
+        this.categoryPanel = new JPanel();
 
 //		this.categoryPanel.repaint();
         this.makeMainPanel();
@@ -77,31 +83,50 @@ public class CartLayout extends JPanel implements ActionListener {
     }
 
     public void addProduct(Produkt produkt) {
-        this.mainPanel.addProdukt(produkt);
+        this.mainPanel.addProdukt(produkt, false);
     }
 
 //    public void removeProduct(Produkt produkt) {
 //        this.mainPanel.removeProdukt(produkt);
 //    }
-
-    private void makeCategoryPanel() {
-        JLabel sum = new JLabel("tu suma");
+     public void refreshCategoryPanel() {
+        float sumFloat = 0;
+        int numOf = 0;
+        ArrayList<Produkt> products = (ArrayList<Produkt>) this.mainPanel.getProducts();
+        ArrayList<Integer> numOfProducts = (ArrayList<Integer>) this.mainPanel.getNumOfProducts();
+        int i = 0;
+        for (Produkt p : products) {
+            sumFloat+=p.getCena()*(int)(numOfProducts.get(i));
+            numOf+=(int)(numOfProducts.get(i));
+            i++;
+        }
+        quantity.setText(String.valueOf(numOf));
+        sum.setText(String.valueOf(sumFloat));
+     }
+     
+    public void makeCategoryPanel() {
+        this.categoryPanel.setLayout(new FlowLayout());
+        Font font = new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, 25);
+        sum = new JLabel();
+        sum.setFont(font);
         sum.setForeground(Color.white);
-        JLabel quantity = new JLabel("ilosc");
+        quantity = new JLabel();
+        quantity.setFont(font);
         quantity.setForeground(Color.white);
         this.categoryPanel.add(sum);
         this.categoryPanel.add(quantity);
         this.categoryPanel.setBackground(Color.black);
+        this.refreshCategoryPanel();
     }
 
     private void makeMainPanel() {
         this.mainPanel = new Cart(new Dimension(getPreferredSize().width - 3 * borderPx - this.getPreferredSize().width / 10,
                 this.getPreferredSize().height - this.getPreferredSize().height / 8 - 8 * borderPx), 20);
         this.mainPanel.setLayout(null);
-        this.mainPanel.setBackground(new Color(255, 69, 69));
-        
-         this.mainPanel.setLayout(null);
-        this.mainPanel.setBackground(new Color(255, 69, 69));
+        this.mainPanel.setBackground(new Color(188, 69, 69));
+
+        this.mainPanel.setLayout(null);
+        this.mainPanel.setBackground(new Color(188, 69, 69));
     }
 
     private void makeUpPanel() {
@@ -110,13 +135,15 @@ public class CartLayout extends JPanel implements ActionListener {
         this.returnButton.setBounds(borderPx, borderPx, this.upPanel.getPreferredSize().height - 2 * ShopLayout.borderPx, this.upPanel.getPreferredSize().height - 2 * ShopLayout.borderPx);
         this.returnButton.addActionListener(this);
 
-     
+        this.complete = new JButton(Image.CART.icon);
+        this.complete.setBounds(this.upPanel.getPreferredSize().width - this.upPanel.getPreferredSize().height + this.borderPx, borderPx,
+                this.upPanel.getPreferredSize().height - 2 * ShopLayout.borderPx, this.upPanel.getPreferredSize().height - 2 * ShopLayout.borderPx);
+        this.complete.setBackground(Color.black);
+        this.complete.addActionListener(this);
+        this.upPanel.add(this.complete);
+
         this.upPanel.setBackground(Color.BLACK);
         this.upPanel.add(this.returnButton);
-        
-        this.logo = new JLabel("sdgfdfgsd");  //view.Image.LOGO.icon
-         this.logo.setForeground(Color.WHITE);
-        this.upPanel.add(this.logo);
     }
 
     @Override
@@ -124,6 +151,10 @@ public class CartLayout extends JPanel implements ActionListener {
         if (e.getSource() == this.returnButton) {
             MainFrame mf = (MainFrame) (JFrame) SwingUtilities.getWindowAncestor(this);
             mf.returnToShopFromCart();
+        }
+        if (e.getSource() == this.complete) {
+            MainFrame mf = (MainFrame) (JFrame) SwingUtilities.getWindowAncestor(this);
+            mf.showCompleteOrder();
         }
     }
 }

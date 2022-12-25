@@ -42,13 +42,15 @@ public class Details extends JPanel implements ActionListener{
         private boolean isAdmin;
         private int imageWidth = 144;
 	private int imageHeight = 144;
+        private boolean fromCart;
 
 	public Details() {
 	
 	}
 	
-	public Details(Produkt produkt, boolean admin) {
+	public Details(Produkt produkt, boolean admin, boolean fromCart) {
                 this.isAdmin = admin;
+                this.fromCart = fromCart;
 		setForeground(Color.WHITE);
 		this.setBackground(new Color(188, 69, 69));
 		this.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -207,7 +209,11 @@ public class Details extends JPanel implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == this.returnButton) {
 			MainFrame mf = (MainFrame) (JFrame) SwingUtilities.getWindowAncestor(this);
-			mf.returnToShop();
+                        if(!fromCart)
+                            mf.returnToShop();
+                        else{
+                            mf.returnToCart();
+                        }
 		}
 		if(e.getSource() == this.addToCartButton) {
 			this.addToCartPopUp();
