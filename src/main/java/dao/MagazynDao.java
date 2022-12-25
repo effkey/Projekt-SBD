@@ -11,9 +11,9 @@ public class MagazynDao extends DAO<Magazyn>{
     public MagazynDao(){
         this.setmodelClass(map.Magazyn.class);
     }
-    
+
     @Override
-    public List<Magazyn> search(Magazyn criteria){
+    public List<Magazyn> search(Magazyn criteria) {
         return null;
     }   
 }

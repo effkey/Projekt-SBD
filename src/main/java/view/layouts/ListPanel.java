@@ -1,5 +1,6 @@
 package view.layouts;
 
+import dao.ProduktDao;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
@@ -101,7 +102,10 @@ public class ListPanel extends JPanel implements ActionListener {
         JButton toDetails;
         JTextArea shortText;
 
-        addToCart = new JButton(Image.CART_ADD.icon);
+        if(!admin)
+            addToCart = new JButton(Image.CART_ADD.icon);
+        else
+            addToCart = new JButton(Image.REMOVE.icon);
         toDetails = new JButton(Image.DETAILS.icon);
         if (produkt.getOpis().length() > 100) {
             shortText = new JTextArea(produkt.getNazwaProduktu() + "\n\n" + produkt.getOpis().substring(0, 100) + "...");
@@ -147,8 +151,17 @@ public class ListPanel extends JPanel implements ActionListener {
 //		System.out.println("DODAWANE JEST, ileIchJest: " + listSize);
     }
 
-    public void removeProdukt(Produkt produkt) {
-        list.remove(produkt);
+    public void removeProdukt(int index) {
+        int max = this.list.size() - 1;
+        this.remove(this.addToCartButton.get(max));
+        this.addToCartButton.remove(max);
+        this.remove(this.toDetailsButton.get(max));
+        this.toDetailsButton.remove(max);
+        this.remove(this.shortTextLabel.get(max));
+        this.shortTextLabel.remove(max);
+        this.list.remove(index);
+        this.revalidate();
+        this.repaint();
     }
 
     @Override
@@ -180,10 +193,16 @@ public class ListPanel extends JPanel implements ActionListener {
         int i = 0;
         for (JButton but : this.addToCartButton) {
             if (e.getSource() == but) {
-                this.addToCartPopUp();
-                System.out.println("Dodano do koszyka: " + this.list.get(i).getNazwaProduktu());
-                MainFrame mf = (MainFrame) (JFrame) SwingUtilities.getWindowAncestor(this);
-                mf.addProductToCart(this.list.get(i));
+                if (admin) {
+                    System.out.println("Usunięto: " + this.list.get(i).getNazwaProduktu());
+                    ProduktDao dao = new ProduktDao();
+                    dao.delete(this.list.get(i));
+                } else {
+                    this.addToCartPopUp();
+                    System.out.println("Dodano do koszyka: " + this.list.get(i).getNazwaProduktu());
+                    MainFrame mf = (MainFrame) (JFrame) SwingUtilities.getWindowAncestor(this);
+                    mf.addProductToCart(this.list.get(i));
+                }
             }
             i++;
         }
