@@ -75,8 +75,9 @@ public class Produkt {
 
     }
 
-    public void setIdProduktu(int idProduktu) {
+    public Produkt setIdProduktu(int idProduktu) {
         this.idProduktu = idProduktu;
+        return this;
     }
 
     public String getNazwaProduktu() {
