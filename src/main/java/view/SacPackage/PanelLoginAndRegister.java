@@ -112,6 +112,7 @@ public class PanelLoginAndRegister extends JPanel {
         login.add(label);
         
         txtUserLog = new MyTextField();
+//        txtUserLog.setPrefixIcon(new ImageIcon("email.png"));
         txtUserLog.setHint("Nazwa Użytkownika");
         login.add(txtUserLog, "w 60%");
         
