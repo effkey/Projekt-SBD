@@ -129,4 +129,14 @@ public class Zamowienie {
 	public void setProdukt(List<Produkt> produkt) {
 		this.produkt = produkt;  //nowe
 	}
+
+    @Override
+    public String toString() {
+        float sum=0;
+        for(Produkt p : this.produkt){
+            sum+=p.getCena();
+        }
+        return "id zamówienia: " + idZamowienia + ", data i godzina: " + dataGodzina + ", kwota: " + String.format("%.2g%n", sum);
+    }
+        
 }

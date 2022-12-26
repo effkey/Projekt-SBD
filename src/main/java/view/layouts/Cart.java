@@ -16,20 +16,23 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextArea;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import map.Produkt;
+import static sun.jvm.hotspot.HelloWorld.e;
 import view.Image;
 import view.MainFrame;
 
-/**
- *
- * @author grzec
- */
-public class Cart extends JPanel implements ActionListener {
+public class Cart extends JPanel implements ChangeListener {
+
     private int imageWidth = 400;
     private int imageHeight = 300;
     public final Dimension defaultResolution = new Dimension(2560, 1440);
@@ -41,6 +44,8 @@ public class Cart extends JPanel implements ActionListener {
     private List<JButton> removeButtons = new ArrayList<JButton>();
     private List<JButton> toDetailsButton = new ArrayList<JButton>();
     private List<JTextArea> shortTextLabel = new ArrayList<JTextArea>();
+    private List<JSpinner> spiners = new ArrayList<>();
+
     private List<Produkt> list = new ArrayList<Produkt>();
 
     public Cart(Dimension dim, int cardinality) {
@@ -69,6 +74,7 @@ public class Cart extends JPanel implements ActionListener {
                 }
             }
         }
+        scale /= 2;
         System.out.println(scale);
         this.imageWidth = (int) (this.imageWidth * scale);
         this.imageHeight = (int) (this.imageHeight * scale);
@@ -76,15 +82,30 @@ public class Cart extends JPanel implements ActionListener {
         font = new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 40));
     }
 
-    public void addProdukt(Produkt produkt) {
-        System.out.println(curResolution.width + " " + curResolution.height);
+    public void addProdukt(Produkt produkt, boolean isRepaint) {
+        if (!isRepaint) {
+            MainFrame frame = (MainFrame) (JFrame) SwingUtilities.getWindowAncestor(this);
+            frame.refreshCategoryPanel();
+            for (int i = 0; i < this.list.size(); i++) {
+                if (this.list.get(i).getIdProduktu() == produkt.getIdProduktu()) {
+                    int integ = (Integer) this.spiners.get(i).getValue();
+                    integ++;
+                    this.spiners.get(i).setValue(integ);
+                    return;
+                }
+            }
+        }
         JButton removeButton;
         JButton toDetails;
         JTextArea shortText;
+        JSpinner spinner;
 
-        removeButton = new JButton(Image.CART_ADD.icon);
+        SpinnerModel model = new SpinnerNumberModel(1, 1, produkt.getLiczbaSztuk(), 1);
+        spinner = new JSpinner(model);
+        spinner.addChangeListener(this);
+        spinner.setFont(font);
+        removeButton = new JButton(Image.REMOVE.icon);
         toDetails = new JButton(Image.DETAILS.icon);
-
         shortText = new JTextArea(produkt.getNazwaProduktu());
 
         shortText.setFont(font);
@@ -92,54 +113,130 @@ public class Cart extends JPanel implements ActionListener {
         shortText.setWrapStyleWord(true);
         shortText.setEditable(false);
 //		shortText.setIgnoreRepaint(true);
+        int tmp = this.list.size();
 
-        shortText.setBounds(imageWidth / 4 + imageWidth + ShopLayout.borderPx, (this.list.size()) * imageHeight * 6 / 5 + imageHeight / 6,
-                this.getPreferredSize().width - 2 * imageWidth, imageHeight);
-        toDetails.setBounds(this.getPreferredSize().width - 3 * imageWidth / 4 + 2 * ShopLayout.borderPx, 3 / 2 * (this.list.size()) * imageHeight * 6 / 5 + imageHeight / 6 + imageHeight / 2 + ShopLayout.borderPx,
-                imageHeight / 2 - ShopLayout.borderPx, imageHeight / 2 - ShopLayout.borderPx);
-        removeButton.setBounds(this.getPreferredSize().width - 3 * imageWidth / 4 + 2 * ShopLayout.borderPx,
-                3 / 2 * (this.list.size()) * imageHeight * 6 / 5 + imageHeight / 6,
-                imageHeight / 2 - ShopLayout.borderPx,
-                imageHeight / 2 - ShopLayout.borderPx);
+        switch (tmp % 3) {
+            case 0:
+                shortText.setBounds(imageWidth + 2 * ShopLayout.borderPx,
+                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx,
+                        imageWidth * 2,
+                        imageHeight / 3);
+                toDetails.setBounds(imageWidth + 2 * ShopLayout.borderPx,
+                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 3,
+                        2 * imageWidth / 3,
+                        2 * imageHeight / 3);
+                removeButton.setBounds(imageWidth + 2 * ShopLayout.borderPx + 2 * imageWidth / 3,
+                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 3,
+                        2 * imageWidth / 3,
+                        2 * imageHeight / 3);
+                spinner.setBounds(imageWidth + 2 * ShopLayout.borderPx + 4 * imageWidth / 3,
+                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 3,
+                        2 * imageWidth / 3,
+                        2 * imageHeight / 3);
+                break;
+            case 1:
+                shortText.setBounds(imageWidth + 2 * ShopLayout.borderPx + 4 * imageWidth,
+                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx,
+                        imageWidth * 2,
+                        imageHeight / 3);
+                toDetails.setBounds(imageWidth + 2 * ShopLayout.borderPx + 4 * imageWidth,
+                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 3,
+                        2 * imageWidth / 3,
+                        2 * imageHeight / 3);
+                removeButton.setBounds(imageWidth + 2 * ShopLayout.borderPx + 2 * imageWidth / 3 + 4 * imageWidth,
+                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 3,
+                        2 * imageWidth / 3,
+                        2 * imageHeight / 3);
+                spinner.setBounds(imageWidth + 2 * ShopLayout.borderPx + 4 * imageWidth / 3 + 4 * imageWidth,
+                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 3,
+                        2 * imageWidth / 3,
+                        2 * imageHeight / 3);
+                break;
+            default:
+                shortText.setBounds(imageWidth + 2 * ShopLayout.borderPx + 8 * imageWidth,
+                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx,
+                        imageWidth * 2,
+                        imageHeight / 3);
+                toDetails.setBounds(imageWidth + 2 * ShopLayout.borderPx + 8 * imageWidth,
+                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 3,
+                        2 * imageWidth / 3,
+                        2 * imageHeight / 3);
+                removeButton.setBounds(imageWidth + 2 * ShopLayout.borderPx + 2 * imageWidth / 3 + 8 * imageWidth,
+                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 3,
+                        2 * imageWidth / 3,
+                        2 * imageHeight / 3);
+                spinner.setBounds(imageWidth + 2 * ShopLayout.borderPx + 4 * imageWidth / 3 + 8 * imageWidth,
+                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 3,
+                        2 * imageWidth / 3,
+                        2 * imageHeight / 3);
+                break;
+        }
 
-        removeButton.addActionListener(this);
-        toDetails.addActionListener(this);
+        removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == removeButton) {
+                    removeProdukt(tmp);
+                }
+            }
 
+        });
+        toDetails.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainFrame frame = (MainFrame) (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, (JComponent) e.getSource());  // zdobądź rodzica (czyli JFrame)
+                frame.showProductPanelCart(produkt);
+            }
+
+        });
         shortText.setForeground(Color.WHITE);
         shortText.setBackground(Color.BLACK);
         toDetails.setBackground(Color.black);
         removeButton.setBackground(Color.black);
 
         this.removeButtons.add(removeButton);
-        this.shortTextLabel.add(shortText);
         this.toDetailsButton.add(toDetails);
-
-        removeButton.setVisible(true);
-        shortText.setVisible(true);
-        toDetails.setVisible(true);
+        this.spiners.add(spinner);
+        this.shortTextLabel.add(shortText);
 
         this.add(shortText);
         this.add(removeButton);
         this.add(toDetails);
-
-        list.add(produkt);
+        this.add(spinner);
+        if (!isRepaint) {
+            list.add(produkt);
+        }
         this.repaint();
+        MainFrame frame = (MainFrame) (JFrame) SwingUtilities.getWindowAncestor(this);
+        frame.refreshCategoryPanel();
+
 //		System.out.println("DODAWANE JEST, ileIchJest: " + this.list.size());
     }
 
-    public void removeProdukt(Produkt produkt, int index) {
-//        int index = list.indexOf(produkt);
-        this.remove(index);
-        this.remove(index);
-        this.remove(index);
-        list.remove(produkt);
+    public void removeProdukt(int index) {
+        int max = this.list.size() - 1;
+        this.remove(this.removeButtons.get(max));
+        this.removeButtons.remove(max);
+
+        this.remove(this.toDetailsButton.get(max));
+        this.toDetailsButton.remove(max);
+        this.remove(this.shortTextLabel.get(max));
+        this.shortTextLabel.remove(max);
+        for (int i = index; i < this.spiners.size() - 1; i++) {
+            this.spiners.get(i).setValue(this.spiners.get(i + 1).getValue());
+        }
+        this.remove(this.spiners.get(max));
+        this.spiners.remove(max);
+        this.list.remove(index);
         this.repaint();
+        MainFrame frame = (MainFrame) (JFrame) SwingUtilities.getWindowAncestor(this);
+        frame.refreshCategoryPanel();
     }
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
-        g2d.scale(scale/3, scale/3);
+        g2d.scale(scale / 1, scale / 1);
         this.paintProducts(g2d);
         g2d.scale(1 / scale, 1 / scale);
     }
@@ -147,37 +244,51 @@ public class Cart extends JPanel implements ActionListener {
     private void paintProducts(Graphics2D g2d) {
         g2d.setColor(Color.WHITE);
         g2d.setFont(font);
-        int i = 0;
-        for (Produkt produkt : list) {
-            int posX = (int) (1 / scale * imageWidth / 4), posY = (int) (i * 1 / scale * imageHeight * 6 / 5 + 1 / scale * imageHeight / 6);
-            g2d.drawImage(new ImageIcon("src/products/" + this.list.get(this.list.size() - 1).getNazwaObrazka()).getImage(), posX, posY, null);
-            i++;
+        for (int i = 0; i < this.list.size(); i++) {
+            switch (i % 3) {
+                case 0: {
+                    int posX = ShopLayout.borderPx, posY = (int) (i / 3 * 1 / scale * 4 * imageHeight / 3 + ShopLayout.borderPx);
+                    if (!g2d.drawImage(new ImageIcon("src/main/products/" + this.list.get(i).getNazwaObrazka()).getImage(), posX, posY, null)) {
+                        g2d.drawImage(Image.EMPTY.icon.getImage(), posX, posY, null);
+                    }
+                    break;
+                }
+                case 1: {
+                    int posX = ShopLayout.borderPx + 8 * imageWidth, posY = (int) (i / 3 * 1 / scale * 4 * imageHeight / 3 + ShopLayout.borderPx);
+                    if (!g2d.drawImage(new ImageIcon("src/main/products/" + this.list.get(i).getNazwaObrazka()).getImage(), posX, posY, null)) {
+                        g2d.drawImage(Image.EMPTY.icon.getImage(), posX, posY, null);
+                    }
+
+                    break;
+                }
+                case 2: {
+                    int posX = ShopLayout.borderPx + 16 * imageWidth, posY = (int) (i / 3 * 1 / scale * 4 * imageHeight / 3 + ShopLayout.borderPx);
+                    if (!g2d.drawImage(new ImageIcon("src/main/products/" + this.list.get(i).getNazwaObrazka()).getImage(), posX, posY, null)) {
+                        g2d.drawImage(Image.EMPTY.icon.getImage(), posX, posY, null);
+                    }
+
+                    break;
+                }
+            }
         }
 
+    }
+
+    public List<Produkt> getProducts() {
+        return this.list;
+    }
+
+    public List<Integer> getNumOfProducts() {
+        List<Integer> ret = new ArrayList<Integer>();
+        for (int i = 0; i < this.list.size(); i++) {
+            ret.add((Integer) this.spiners.get(i).getValue());
+        }
+        return ret;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        int i = 0;
-        for (JButton but : this.removeButtons) {
-            if (e.getSource() == but) {
-                removeProdukt(this.list.get(i), i);
-                System.out.println("Usunięto z koszyka: " + this.list.get(i).getNazwaProduktu() + "indeks" + i);
-            }
-            i++;
-        }
-        i = 0;
-        for (JButton but : this.toDetailsButton) {
-            if (e.getSource() == but) {
-                System.out.println("Przejscie do detali: " + this.list.get(i).getNazwaProduktu());
-                MainFrame mf = (MainFrame) (JFrame) SwingUtilities.getWindowAncestor(this);
-                mf.showProductPanel(this.list.get(i));
-            }
-            i++;
-        }
-    }
-
-    private void addToCartPopUp() {
-        JOptionPane.showMessageDialog(null, "Dodano produkt do koszyka", "", JOptionPane.INFORMATION_MESSAGE);
+    public void stateChanged(ChangeEvent e) {
+        MainFrame frame = (MainFrame) (JFrame) SwingUtilities.getWindowAncestor(this);
+        frame.refreshCategoryPanel();
     }
 }

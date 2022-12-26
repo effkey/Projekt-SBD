@@ -42,12 +42,11 @@ protected final Transaction getTransaction(Session session) {
     return tx;
 }
 
-public final Long create(T obj) {
+public final void create(T obj) {
     Session session = this.getSession();
     Transaction tx = this.getTransaction(session);
-    Long id = (Long) session.save(obj);
+    session.save(obj);
     tx.commit();
-    return id;
 }
 
 public final void delete(T obj) {
@@ -68,11 +67,5 @@ public T getById(Long id) {
     return getSession().get(modelClass, id);
 }
 
-@SuppressWarnings("unchecked")
-public List<T> getAll() {
-    return getSession().createQuery("from " + 
-        modelClass.getName()).list();
-}
-
-public abstract List<T> search(T criteria);
+    public abstract List<T> search(T criteria);
 }

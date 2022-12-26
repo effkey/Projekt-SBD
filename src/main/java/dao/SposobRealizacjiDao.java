@@ -8,9 +8,9 @@ public class SposobRealizacjiDao extends DAO<SposobRealizacji>{
     public SposobRealizacjiDao(){
         this.setmodelClass(map.SposobRealizacji.class);
     }
-    
+
     @Override
-    public List<SposobRealizacji> search(SposobRealizacji criteria){
+    public List<SposobRealizacji> search(SposobRealizacji criteria) {
         return null;
-    }   
+    }
 }

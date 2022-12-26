@@ -10,7 +10,7 @@ public class AdresDao extends DAO<Adres>{
     }
     
     @Override
-    public List<Adres> search(Adres criteria){
+    public List<Adres> search(Adres criteria) {
         return null;
     }   
 }
