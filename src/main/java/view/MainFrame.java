@@ -29,6 +29,7 @@ import map.Produkt;
 import map.Uzytkownik;
 import map.Zamowienie;
 import view.SacPackage.OrderPanel;
+import view.SacPackage.UzytForm;
 import view.layouts.CartLayout;
 import view.layouts.NewProduct;
 
@@ -54,7 +55,7 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
         test();
         this.setTitle("Hardware Shop");
         this.setResizable(false);
-        this.panels = new JPanel[3];
+        this.panels = new JPanel[4];
         initComponents();
         init();
     }
@@ -63,6 +64,11 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
     public void refreshCategoryPanel() {
         CartLayout tmp = (CartLayout) this.panels[2];
         tmp.refreshCategoryPanel();
+    }
+
+    public void refreshShop(Produkt produkt) {
+        ShopLayout sl = (ShopLayout) this.panels[0];
+        sl.refreshProduct(produkt);
     }
 
     public void showProductPanel(Produkt produkt) {
@@ -81,6 +87,11 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
         this.panels[2].setVisible(false);
         this.panels[1] = new OrderPanel();
         this.add(panels[1]);
+    }
+
+    public void showUserSettings() {
+        this.panels[0].setVisible(false);
+        this.panels[3].setVisible(true);
     }
 
     public void returnToCart() {
@@ -123,25 +134,39 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
         panel.addProduct(produkt);
     }
 
+    public void showOrderDetails() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
     public void loadPanels(Uzytkownik user) {
         this.user = user;
         this.panels[0] = new ShopLayout(user.isUprawnieniaAdministratora());
         loadProducts();
         this.panels[2] = new CartLayout();
+        this.panels[3] = new UzytForm(user);
+
         this.add(this.panels[2]);
-        this.panels[2].setVisible(false);
+        this.add(this.panels[3]);
         this.add(this.panels[0]);
+
+        this.panels[2].setVisible(false);
+        this.panels[3].setVisible(false);
+        this.panels[0].setVisible(true);
     }
 
     private void loadProducts() {
         ProduktDao dao = new ProduktDao();
         ArrayList<Produkt> produkty = (ArrayList<Produkt>) dao.getAll();
         for (Produkt produkt : produkty) {
-            this.addProduct(produkt);
+            if (user.isUprawnieniaAdministratora()) {
+                this.addProduct(produkt);
+            } else if (produkt.getLiczbaSztuk() > 0) {
+                this.addProduct(produkt);
+            }
         }
     }
-    
-    public void addProduct(Produkt produkt){
+
+    public void addProduct(Produkt produkt) {
         ShopLayout sl = (ShopLayout) this.panels[0];
         sl.addProduct(produkt);
     }
@@ -334,4 +359,5 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane Background;
     // End of variables declaration//GEN-END:variables
+
 }

@@ -6,16 +6,18 @@ import map.Kategoria;
 import map.Produkt;
 import map.Produkt;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
-public class ProduktDao extends DAO<Produkt>{
-    public ProduktDao(){
+public class ProduktDao extends DAO<Produkt> {
+
+    public ProduktDao() {
         this.setmodelClass(map.Produkt.class);
     }
-    
+
     @Override
-    public List<Produkt> search(Produkt criteria){
+    public List<Produkt> search(Produkt criteria) {
         return null;
-    }   
+    }
 
     public ArrayList<Produkt> getAll() {
         Session session = this.getSession();
@@ -31,5 +33,31 @@ public class ProduktDao extends DAO<Produkt>{
 
         return null;
     }
-    
+
+    public void updateProdukt(Produkt obj) {
+        Session session = this.getSession();
+        session.beginTransaction();
+//        Produkt produkt = (Produkt) session.createQuery(
+//                "select p "
+//                + "from map.Produkt p "
+//                + "where p.idProduktu =:id")
+//                .setParameter("id", obj.getIdProduktu())
+//                .uniqueResult();
+//        session.getTransaction().commit();
+        Produkt produkt = session.load(Produkt.class, obj.getIdProduktu());
+        System.out.println(produkt.getNazwaObrazka());
+        produkt.setCena(obj.getCena());
+        produkt.setKategoria(obj.getKategoria());
+        produkt.setLiczbaSztuk(obj.getLiczbaSztuk());
+        produkt.setNazwaObrazka(obj.getNazwaObrazka());
+        produkt.setNazwaProduktu(obj.getNazwaProduktu());
+        produkt.setOpis(obj.getOpis());
+        produkt.setProducent(obj.getProducent());
+        System.out.println(produkt.getNazwaObrazka());
+//
+//        session = this.getSession();
+//        session.beginTransaction();
+        session.update(produkt);
+        session.getTransaction().commit();
+    }
 }

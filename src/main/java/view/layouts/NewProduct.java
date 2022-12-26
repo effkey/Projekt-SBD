@@ -37,6 +37,7 @@ import map.Kategoria;
 import map.Producent;
 import map.Produkt;
 import view.MainFrame;
+import static view.layouts.ListPanel.scale;
 
 public class NewProduct extends JPanel implements ActionListener {
 
@@ -45,7 +46,7 @@ public class NewProduct extends JPanel implements ActionListener {
     private int imageWidth = 100;
     private int imageHeight = 100;
 
-    private Font font = new Font("Sans Serif", Font.BOLD, 40);
+    private Font font = new Font("Sans Serif", Font.BOLD, (int) (scale * 40));
 
     public NewProduct() {
         setForeground(Color.WHITE);

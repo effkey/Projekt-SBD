@@ -248,17 +248,25 @@ public class Cart extends JPanel implements ChangeListener {
             switch (i % 3) {
                 case 0: {
                     int posX = ShopLayout.borderPx, posY = (int) (i / 3 * 1 / scale * 4 * imageHeight / 3 + ShopLayout.borderPx);
-                    g2d.drawImage(new ImageIcon("src/products/" + this.list.get(this.list.size() - 1).getNazwaObrazka()).getImage(), posX, posY, null);
+                    if (!g2d.drawImage(new ImageIcon("src/main/products/" + this.list.get(i).getNazwaObrazka()).getImage(), posX, posY, null)) {
+                        g2d.drawImage(Image.EMPTY.icon.getImage(), posX, posY, null);
+                    }
                     break;
                 }
                 case 1: {
                     int posX = ShopLayout.borderPx + 8 * imageWidth, posY = (int) (i / 3 * 1 / scale * 4 * imageHeight / 3 + ShopLayout.borderPx);
-                    g2d.drawImage(new ImageIcon("src/products/" + this.list.get(this.list.size() - 1).getNazwaObrazka()).getImage(), posX, posY, null);
+                    if (!g2d.drawImage(new ImageIcon("src/main/products/" + this.list.get(i).getNazwaObrazka()).getImage(), posX, posY, null)) {
+                        g2d.drawImage(Image.EMPTY.icon.getImage(), posX, posY, null);
+                    }
+
                     break;
                 }
                 case 2: {
                     int posX = ShopLayout.borderPx + 16 * imageWidth, posY = (int) (i / 3 * 1 / scale * 4 * imageHeight / 3 + ShopLayout.borderPx);
-                    g2d.drawImage(new ImageIcon("src/products/" + this.list.get(this.list.size() - 1).getNazwaObrazka()).getImage(), posX, posY, null);
+                    if (!g2d.drawImage(new ImageIcon("src/main/products/" + this.list.get(i).getNazwaObrazka()).getImage(), posX, posY, null)) {
+                        g2d.drawImage(Image.EMPTY.icon.getImage(), posX, posY, null);
+                    }
+
                     break;
                 }
             }

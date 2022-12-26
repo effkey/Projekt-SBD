@@ -12,7 +12,9 @@ public enum Image {
 	LOGO(new ImageIcon("src/main/images/LOGO.png")),
         RETURN(new ImageIcon("src/main/images/return.png")),
         REMOVE(new ImageIcon("src/main/images/REMOVE.png")),
-        SAVE(new ImageIcon("src/main/images/save.png"));
+        SAVE(new ImageIcon("src/main/images/save.png")),
+        EDIT_SAVE(new ImageIcon("src/main/images/edit_save.png")),
+        EMPTY(new ImageIcon("src/main/images/empty_image.png"));
 	
 	public ImageIcon icon;
 	private Image(ImageIcon icon) {

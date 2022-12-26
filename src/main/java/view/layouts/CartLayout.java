@@ -10,10 +10,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.HashMap;
-
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -23,7 +20,7 @@ import javax.swing.text.View;
 import map.Produkt;
 import view.Image;
 import view.MainFrame;
-import static view.layouts.ShopLayout.borderPx;
+import static view.layouts.ListPanel.scale;
 
 public class CartLayout extends JPanel implements ActionListener {
 
@@ -89,24 +86,26 @@ public class CartLayout extends JPanel implements ActionListener {
 //    public void removeProduct(Produkt produkt) {
 //        this.mainPanel.removeProdukt(produkt);
 //    }
-     public void refreshCategoryPanel() {
+    public void refreshCategoryPanel() {
         float sumFloat = 0;
         int numOf = 0;
         ArrayList<Produkt> products = (ArrayList<Produkt>) this.mainPanel.getProducts();
         ArrayList<Integer> numOfProducts = (ArrayList<Integer>) this.mainPanel.getNumOfProducts();
         int i = 0;
         for (Produkt p : products) {
-            sumFloat+=p.getCena()*(int)(numOfProducts.get(i));
-            numOf+=(int)(numOfProducts.get(i));
+            sumFloat += p.getCena() * (int) (numOfProducts.get(i));
+            numOf += (int) (numOfProducts.get(i));
             i++;
         }
         quantity.setText(String.valueOf(numOf));
         sum.setText(String.valueOf(sumFloat));
-     }
-     
+        // proszę wymyśl tu jakieś sensowne wyświetlanie tych informacji
+        // liczę na twoją kreatywność
+    }
+
     public void makeCategoryPanel() {
         this.categoryPanel.setLayout(new FlowLayout());
-        Font font = new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, 25);
+        Font font = new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (40*scale));
         sum = new JLabel();
         sum.setFont(font);
         sum.setForeground(Color.white);

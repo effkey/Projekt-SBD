@@ -176,4 +176,8 @@ public class Produkt {
         return idProduktu;
     }
 
+    public void setNazwaObrazka(String nazwaObrazka) {
+        this.nazwaObrazka = nazwaObrazka;
+    }
+
 }

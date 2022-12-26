@@ -2,6 +2,7 @@ package view.layouts;
 
 import dao.KategoriaDao;
 import dao.ProducentDao;
+import dao.ProduktDao;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -38,6 +39,7 @@ import map.Kategoria;
 import map.Producent;
 import map.Produkt;
 import view.MainFrame;
+import static view.layouts.ListPanel.scale;
 
 public class Details extends JPanel implements ActionListener {
 
@@ -48,8 +50,9 @@ public class Details extends JPanel implements ActionListener {
     private int imageWidth = 144;
     private int imageHeight = 144;
     private boolean fromCart;
+    private Produkt produkt;
 
-    private Font font = new Font("Sans Serif", Font.BOLD, 40);
+    private Font font = new Font("Sans Serif", Font.BOLD, (int) (scale * 40));
 
     public Details() {
 
@@ -58,6 +61,7 @@ public class Details extends JPanel implements ActionListener {
     public Details(Produkt produkt, boolean admin, boolean fromCart) {
         this.isAdmin = admin;
         this.fromCart = fromCart;
+        this.produkt = produkt;
         setForeground(Color.WHITE);
         this.setBackground(new Color(188, 69, 69));
         this.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -93,13 +97,13 @@ public class Details extends JPanel implements ActionListener {
         returnButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         returnButton.setBackground(Color.BLACK);
         returnPanel.add(returnButton);
-
         JLabel logo = new JLabel(view.Image.LOGO.icon);
         panel.add(logo);
 
-        JLabel nameLabel = new JLabel(produkt.getNazwaProduktu());
+        JTextField nameLabel = new JTextField(produkt.getNazwaProduktu());
         nameLabel.setFont(font);
         nameLabel.setForeground(Color.WHITE);
+        nameLabel.setBackground(Color.black);
         nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
         nameLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
         panel.add(nameLabel);
@@ -113,7 +117,7 @@ public class Details extends JPanel implements ActionListener {
         this.add(imagePanel, gbc_imagePanel);
 
         JLabel imageLabel = new JLabel();
-        imageLabel.setIcon(new ImageIcon("src/products/" + produkt.getNazwaObrazka()));
+        imageLabel.setIcon(new ImageIcon("src/main/products/" + produkt.getNazwaObrazka()));
         imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         imagePanel.add(imageLabel);
 
@@ -142,7 +146,7 @@ public class Details extends JPanel implements ActionListener {
         pieces.setForeground(Color.WHITE);
         textInputsPanel.add(pieces);
 
-        SpinnerModel model = new SpinnerNumberModel(1, 1, 10000, 1);
+        SpinnerModel model = new SpinnerNumberModel(this.produkt.getLiczbaSztuk(), 0, 10000, 1);
         JSpinner spinner = new JSpinner(model);
         spinner.setFont(font);
         textInputsPanel.add(spinner);
@@ -151,8 +155,12 @@ public class Details extends JPanel implements ActionListener {
         priceLabel.setFont(font);
         priceLabel.setForeground(Color.WHITE);
         textInputsPanel.add(priceLabel);
-
-        JTextField price = new JTextField(String.valueOf(produkt.getCena()));
+        
+        String pr = String.valueOf(produkt.getCena());
+        if(produkt.getCena()*10%10==0){
+            pr+="0";
+        }
+        JTextField price = new JTextField(pr);
         price.setFont(font);
         price.setEditable(isAdmin);
         textInputsPanel.add(price);
@@ -162,7 +170,6 @@ public class Details extends JPanel implements ActionListener {
         producentLabel.setForeground(Color.WHITE);
         textInputsPanel.add(producentLabel);
 
-        
         ProducentDao pDao = new ProducentDao();
         ArrayList<Producent> prod = (ArrayList<Producent>) pDao.getAll();
         JComboBox producent = new JComboBox();
@@ -218,6 +225,40 @@ public class Details extends JPanel implements ActionListener {
         descTextArea.setBackground(Color.BLACK);
         descTextArea.setEditable(isAdmin);
         descPanel.add(descTextArea);
+        if (admin) {
+            JButton save = new JButton(view.Image.EDIT_SAVE.icon);
+            save.setPreferredSize(new Dimension(imageWidth, imageHeight));
+            save.setFont(font);
+            save.setAlignmentX(Component.LEFT_ALIGNMENT);
+            save.setBackground(Color.BLACK);
+            returnPanel.add(save);
+
+            JTextField imageText = new JTextField();
+            imageText.setText(produkt.getNazwaObrazka());
+            imageText.setHorizontalAlignment(SwingConstants.CENTER);
+            imagePanel.add(imageText);
+            save.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (e.getSource() == save) {
+                        Kategoria kategoria = (Kategoria) category.getSelectedItem();
+                        Producent prod = (Producent) producent.getSelectedItem();
+                        ProduktDao dao = new ProduktDao();
+
+                        produkt.setCena(Float.parseFloat(price.getText()));
+                        produkt.setKategoria(kategoria);
+                        produkt.setLiczbaSztuk((int) spinner.getValue());
+                        produkt.setNazwaObrazka(imageText.getText());
+                        produkt.setNazwaProduktu(nameLabel.getText());
+                        produkt.setOpis(descTextArea.getText());
+                        produkt.setProducent(prod);
+                        dao.update(produkt);
+                        MainFrame mf = (MainFrame) (JFrame) SwingUtilities.getWindowAncestor(returnButton);
+                        mf.refreshShop(produkt);
+                    }
+                }
+            });
+        }
     }
 
     @Override
@@ -231,6 +272,8 @@ public class Details extends JPanel implements ActionListener {
             }
         }
         if (e.getSource() == this.addToCartButton) {
+            MainFrame mf = (MainFrame) (JFrame) SwingUtilities.getWindowAncestor(this);
+            mf.addProductToCart(produkt);
             this.addToCartPopUp();
         }
 

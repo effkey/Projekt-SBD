@@ -76,6 +76,9 @@ public class PanelLoginAndRegister extends JPanel {
         txtPassReg.setPrefixIcon(new ImageIcon("src/main/icons/password.png"));
         txtPassReg.setHint("Hasło");
         register.add(txtPassReg, "w 60%");
+        
+        // TRZEBA OGARNĄĆ ŻEBY TE DANE WYŚWIETLANE BYŁY W TYCH SAMYCH ODSTĘPACH
+        
 
         MyPasswordField txtPass2 = new MyPasswordField();
         txtPass2.setPrefixIcon(new ImageIcon("src/main/icons/password.png"));
