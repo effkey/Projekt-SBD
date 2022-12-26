@@ -56,4 +56,3 @@ public class UzytkownikDao extends DAO<Uzytkownik>{
 
                 return null;
 }
-}

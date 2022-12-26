@@ -30,6 +30,7 @@ import map.Uzytkownik;
 import map.Zamowienie;
 import view.SacPackage.OrderPanel;
 import view.SacPackage.UzytForm;
+
 import view.layouts.CartLayout;
 import view.layouts.NewProduct;
 
@@ -52,15 +53,17 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
     //
 
     public MainFrame() {
-        test();
         this.setTitle("Hardware Shop");
+
         this.setResizable(false);
         this.panels = new JPanel[4];
         initComponents();
         init();
     }
+    
 
 // Z ShopFrame
+
     public void refreshCategoryPanel() {
         CartLayout tmp = (CartLayout) this.panels[2];
         tmp.refreshCategoryPanel();
@@ -71,8 +74,9 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
         sl.refreshProduct(produkt);
     }
 
+
     public void showProductPanel(Produkt produkt) {
-        this.panels[1] = new Details(produkt, user.isUprawnieniaAdministratora(), false);
+        this.panels[1] = new Details(produkt, user.isUprawnieniaAdministratora());
         this.panels[0].setVisible(false);
         this.add(panels[1]);
     }
@@ -99,11 +103,12 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
         this.panels[2].setVisible(true);
     }
 
+
     public void returnToShop() {
         this.remove(this.panels[1]);
         this.panels[0].setVisible(true);
     }
-
+    
     public void returnToShopFromCart() {
         this.panels[2].setVisible(false);
         this.panels[0].setVisible(true);
@@ -128,8 +133,8 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
         this.panels[0].setVisible(false);
         this.panels[2].setVisible(true);
     }
-
-    public void addProductToCart(Produkt produkt) {
+    
+    public void addProductToCart(Produkt produkt){
         CartLayout panel = (CartLayout) this.panels[2];
         panel.addProduct(produkt);
     }
@@ -169,20 +174,6 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
     public void addProduct(Produkt produkt) {
         ShopLayout sl = (ShopLayout) this.panels[0];
         sl.addProduct(produkt);
-    }
-
-    private void test() {
-//        KategoriaDao dao1 = new KategoriaDao();
-//        dao1.addKategoria("Ram", "Pamięć o dostępie swobodnym, pamięć główna, RAM");
-//        dao1.addKategoria("Płyta główna", "Obwód drukowany urządzenia elektronicznego, na którym montuje się najważniejsze elementy, umożliwiając komunikację wszystkim pozostałym komponentom i modułom");
-//        dao1.addKategoria("Procesor", "Sekwencyjne urządzenie cyfrowe, które pobiera dane z pamięci operacyjnej lub strumienia danych, interpretuje je i wykonuje jako rozkazy, zwracając dane do pamięci lub wyjściowego strumienia danych");
-//        dao1.addKategoria("Zasilacz", "Urządzenie służące do dopasowania dostępnego napięcia do wymagań zasilanego urządzenia");
-//        
-//        ProducentDao dao2 = new ProducentDao();
-//        dao2.addProducent("ASUS", "Tajwan", "Tajwańskie przedsiębiorstwo zajmujące się produkcją elektroniki, głównie: płyt głównych, kart graficznych, laptopów, smartfonów, tabletów, komputerów stacjonarnych oraz napędów optycznych");
-//        
-//        UzytkownikDao dao3 = new UzytkownikDao();
-//        dao3.addUser("Dawid", "Bartosiuk", "b", "b", new Date(), "dawid@bartosiuk.pl", true);
     }
 
     private void init() {
