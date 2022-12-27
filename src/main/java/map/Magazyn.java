@@ -64,4 +64,10 @@ public class Magazyn {
 		this.adres = adres;
 	}
 
+    @Override
+    public String toString() {
+        return "id=" + idMagazynu;
+    }
+
+        
 }

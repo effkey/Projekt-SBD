@@ -67,7 +67,6 @@ public class PanelLoginAndRegister extends JPanel {
         txtsurname.setHint("Nazwisko");
         register.add(txtsurname, "w 60%");
 
-
         MyTextField txtEmail = new MyTextField();
         txtEmail.setPrefixIcon(new ImageIcon("src/main/icons/email.png"));
         txtEmail.setHint("E-mail");
@@ -78,15 +77,13 @@ public class PanelLoginAndRegister extends JPanel {
         txtPassReg.setHint("Hasło");
         register.add(txtPassReg, "w 60%");
         
-
         // TRZEBA OGARNĄĆ ŻEBY TE DANE WYŚWIETLANE BYŁY W TYCH SAMYCH ODSTĘPACH
-  
+        
 
         MyPasswordField txtPass2 = new MyPasswordField();
         txtPass2.setPrefixIcon(new ImageIcon("src/main/icons/password.png"));
         txtPass2.setHint("Powtorz haslo");
         register.add(txtPass2, "w 60%");
-
 
         Button cmd = new Button();
         cmd.setBackground(new Color(196, 53, 53));
@@ -104,7 +101,6 @@ public class PanelLoginAndRegister extends JPanel {
                     user = dao.addUser(name, surname, login, pass, new Date(), email, false);
 
                     //user = dao.getUser(pass, login);
-
                 }
             }
         });

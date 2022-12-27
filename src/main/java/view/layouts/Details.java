@@ -109,6 +109,7 @@ public class Details extends JPanel implements ActionListener {
         panel.add(nameLabel);
 
         JPanel imagePanel = new JPanel();
+        imagePanel.setLayout(new FlowLayout());
         imagePanel.setBackground(new Color(128, 128, 128));
         GridBagConstraints gbc_imagePanel = new GridBagConstraints();
         gbc_imagePanel.insets = new Insets(0, 0, 5, 5);
@@ -141,24 +142,24 @@ public class Details extends JPanel implements ActionListener {
         addToCartButton.setBackground(Color.BLACK);
         textPanel.add(addToCartButton);
 
-        JLabel pieces = new JLabel("Liczba sztuk: ");
-        pieces.setFont(font);
-        pieces.setForeground(Color.WHITE);
-        textInputsPanel.add(pieces);
-
-        SpinnerModel model = new SpinnerNumberModel(this.produkt.getLiczbaSztuk(), 0, 10000, 1);
-        JSpinner spinner = new JSpinner(model);
-        spinner.setFont(font);
-        textInputsPanel.add(spinner);
+//        JLabel pieces = new JLabel("Liczba sztuk: ");
+//        pieces.setFont(font);
+//        pieces.setForeground(Color.WHITE);
+//        textInputsPanel.add(pieces);
+//
+//        SpinnerModel model = new SpinnerNumberModel(this.produkt.getLiczbaSztuk(), 0, 10000, 1);
+//        JSpinner spinner = new JSpinner(model);
+//        spinner.setFont(font);
+//        textInputsPanel.add(spinner);
 
         JLabel priceLabel = new JLabel("Cena: ");
         priceLabel.setFont(font);
         priceLabel.setForeground(Color.WHITE);
         textInputsPanel.add(priceLabel);
-        
+
         String pr = String.valueOf(produkt.getCena());
-        if(produkt.getCena()*10%10==0){
-            pr+="0";
+        if (produkt.getCena() * 100 % 10 == 0) {
+            pr += "0";
         }
         JTextField price = new JTextField(pr);
         price.setFont(font);
@@ -197,6 +198,16 @@ public class Details extends JPanel implements ActionListener {
         category.setEditable(admin);
         textInputsPanel.add(category);
 
+        JLabel MassLabel = new JLabel("Masa: ");
+        MassLabel.setFont(font);
+        MassLabel.setForeground(Color.WHITE);
+        textInputsPanel.add(MassLabel);
+
+        JTextField mass = new JTextField(String.valueOf(produkt.getMasa()));
+        mass.setFont(font);
+        mass.setEditable(isAdmin);
+        textInputsPanel.add(mass);
+
         JPanel descPanel = new JPanel();
         descPanel.setForeground(Color.WHITE);
         descPanel.setBackground(new Color(188, 69, 69));
@@ -233,9 +244,13 @@ public class Details extends JPanel implements ActionListener {
             save.setBackground(Color.BLACK);
             returnPanel.add(save);
 
-            JTextField imageText = new JTextField();
+            JTextArea imageText = new JTextArea();
+            imageText.setWrapStyleWord(true);
+            imageText.setLineWrap(true);
+            imageText.setPreferredSize(ListPanel.getImageDimension());
             imageText.setText(produkt.getNazwaObrazka());
-            imageText.setHorizontalAlignment(SwingConstants.CENTER);
+            imageText.setFont(font);
+//            imageText.setHorizontalAlignment(SwingConstants.CENTER);
             imagePanel.add(imageText);
             save.addActionListener(new ActionListener() {
                 @Override
@@ -247,11 +262,11 @@ public class Details extends JPanel implements ActionListener {
 
                         produkt.setCena(Float.parseFloat(price.getText()));
                         produkt.setKategoria(kategoria);
-                        produkt.setLiczbaSztuk((int) spinner.getValue());
                         produkt.setNazwaObrazka(imageText.getText());
                         produkt.setNazwaProduktu(nameLabel.getText());
                         produkt.setOpis(descTextArea.getText());
                         produkt.setProducent(prod);
+                        produkt.setMasa(Float.parseFloat(mass.getText()));
                         dao.update(produkt);
                         MainFrame mf = (MainFrame) (JFrame) SwingUtilities.getWindowAncestor(returnButton);
                         mf.refreshShop(produkt);

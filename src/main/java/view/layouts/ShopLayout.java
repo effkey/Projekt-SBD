@@ -103,7 +103,7 @@ public class ShopLayout extends JPanel implements ActionListener {
     }
 
     private void makeCategoryPanel() {
-        if(admin){
+        if (admin) {
             JButton addCategory;
             // dodaj przycisk umożliwiający dodawanie kategorii
             // do tego jakiś popup
@@ -170,7 +170,12 @@ public class ShopLayout extends JPanel implements ActionListener {
 //                this.upPanel.getPreferredSize().height - 2 * ShopLayout.borderPx);
         this.user.addActionListener(this);
 
-        this.cart = new JButton(Image.CART.icon);
+        this.cart = new JButton();
+        if (admin) {
+            this.cart.setIcon(Image.WAREHOUSE.icon);
+        } else {
+            this.cart.setIcon(Image.CART.icon);
+        }
         this.cart.setBounds(this.upPanel.getPreferredSize().width - this.upPanel.getPreferredSize().height + this.borderPx, borderPx,
                 this.upPanel.getPreferredSize().height - 2 * ShopLayout.borderPx,
                 this.upPanel.getPreferredSize().height - 2 * ShopLayout.borderPx);
@@ -183,20 +188,27 @@ public class ShopLayout extends JPanel implements ActionListener {
         this.upPanel.add(this.user);
     }
 
-    public void refreshProduct(Produkt produkt){
+    public void refreshProduct(Produkt produkt) {
         this.mainPanel.refreshProduct(produkt);
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.logOut) {
             this.logOutPopUp();
         }
         if (e.getSource() == this.cart) {
-            System.out.println("Przechodzisz do koszyka");
-            MainFrame mf = (MainFrame) SwingUtilities.getWindowAncestor(this);
-            mf.showCart();
+            if (!admin) {
+                System.out.println("Przechodzisz do koszyka");
+                MainFrame mf = (MainFrame) SwingUtilities.getWindowAncestor(this);
+                mf.showCart();
+            } else {
+                System.out.println("Przechodzisz do magazynów");
+                MainFrame mf = (MainFrame) SwingUtilities.getWindowAncestor(this);
+                mf.showWarehouse();
+            }
         }
+
         if (e.getSource() == this.user) {
             MainFrame mf = (MainFrame) SwingUtilities.getWindowAncestor(this);
             mf.showUserSettings();

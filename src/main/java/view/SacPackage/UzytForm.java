@@ -1,6 +1,7 @@
 package view.SacPackage;
 
 
+import java.awt.Toolkit;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import map.Uzytkownik;
@@ -66,8 +67,11 @@ public class UzytForm extends javax.swing.JPanel {
         jList1 = new javax.swing.JList<>();
         zobaczSzczegolyButton = new javax.swing.JButton();
 
+        setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
+        setRequestFocusEnabled(false);
+
         jPanel1.setBackground(new java.awt.Color(255, 69, 69));
-        jPanel1.setPreferredSize(new java.awt.Dimension(1920, 1080));
+        jPanel1.setRequestFocusEnabled(false);
 
         jPanel2.setBackground(new java.awt.Color(0, 0, 0));
 
@@ -93,7 +97,7 @@ public class UzytForm extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Dane konta", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Sitka Heading", 1, 24), new java.awt.Color(255, 255, 255))); // NOI18N
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Dane konta", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Sitka Heading", 1, 24))); // NOI18N
         jPanel3.setForeground(new java.awt.Color(255, 255, 255));
         jPanel3.setOpaque(false);
 
@@ -271,7 +275,7 @@ public class UzytForm extends javax.swing.JPanel {
                 .addGap(107, 107, 107))
         );
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Lista złożonych zamówień", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Sitka Heading", 1, 24), new java.awt.Color(255, 255, 255))); // NOI18N
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Lista złożonych zamówień", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Sitka Heading", 1, 24))); // NOI18N
         jPanel4.setOpaque(false);
 
         jLabel7.setFont(new java.awt.Font("Sitka Text", 1, 24)); // NOI18N
@@ -326,7 +330,7 @@ public class UzytForm extends javax.swing.JPanel {
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 516, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(37, 37, 37)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(174, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
