@@ -83,8 +83,8 @@ public class ListPanel extends JPanel implements ActionListener {
         font = new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 40));
         if (this.admin) {
             JButton add_product = new JButton("Dodaj nowy produkt");
-            add_product.setBounds((int) (1 / scale * imageWidth / 4),
-                    (int) (1 / scale * imageHeight / 6),
+            add_product.setBounds((int) (imageWidth / 4),
+                    (int) (imageHeight / 6),
                     (int) (6.84 * imageHeight),
                     imageHeight);
             add_product.setFont(font);
