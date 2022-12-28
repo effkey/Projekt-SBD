@@ -1,8 +1,10 @@
 package dao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import map.Uzytkownik;
 import java.util.List;
+import map.Kategoria;
 import map.SposobRealizacji;
 import map.Uzytkownik;
 import org.hibernate.Session;
@@ -55,5 +57,20 @@ public class UzytkownikDao extends DAO<Uzytkownik>{
         session.close();
 
                 return null;
-}
+    }
+        public ArrayList<Uzytkownik> getAll() {
+        Session session = this.getSession();
+        session.beginTransaction();
+        ArrayList<Uzytkownik> cat = null;
+        cat = (ArrayList<Uzytkownik>) session.createQuery(
+                " select cat "
+                + "from map.Uzytkownik cat ")
+                .getResultList();
+        session.getTransaction().commit();
+        if (cat != null) {
+            return cat;
+        }
+
+        return null;
+    }
 }

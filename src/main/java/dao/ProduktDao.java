@@ -3,6 +3,7 @@ package dao;
 import java.util.ArrayList;
 import java.util.List;
 import map.Kategoria;
+import map.Producent;
 import map.Produkt;
 import map.Produkt;
 import org.hibernate.Session;
@@ -60,4 +61,24 @@ public class ProduktDao extends DAO<Produkt> {
         session.update(produkt);
         session.getTransaction().commit();
     }
+    
+        public Produkt addProdukt(String nazwaProduktu, float cena,
+            String opis, float masa, Kategoria kategoria, Producent producent, int liczbaSztuk, String nazwaObrazka) {
+        Session session = this.getSession();
+        session.beginTransaction();
+        Produkt cat = new Produkt();
+        cat.setCena(cena);
+        cat.setKategoria(kategoria);
+        cat.setLiczbaSztuk(liczbaSztuk);
+        cat.setNazwaObrazka(nazwaObrazka);
+        cat.setNazwaProduktu(nazwaProduktu);
+        cat.setOpis(opis);
+        cat.setProducent(producent);
+        session.persist(cat);
+        session.getTransaction().commit();
+        session.close();
+        return null;
+    } 
+    
+    
 }
