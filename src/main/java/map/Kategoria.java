@@ -60,4 +60,9 @@ public class Kategoria {
 		this.opisKategorii = opisKategorii;
 	}
 
+    @Override
+    public String toString() {
+        return nazwaKategorii;
+    }
+
 }

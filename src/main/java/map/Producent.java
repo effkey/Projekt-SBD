@@ -81,4 +81,8 @@ public class Producent {
         this.produkt = produkt;
     }
 
+    @Override
+    public String toString() {
+        return nazwaProducenta;
+    }
 }

@@ -12,11 +12,11 @@ public class UzytkownikDao extends DAO<Uzytkownik>{
     public UzytkownikDao(){
         this.setmodelClass(map.Uzytkownik.class);
     }
-    
+
     @Override
-    public List<Uzytkownik> search(Uzytkownik criteria){
+    public List<Uzytkownik> search(Uzytkownik criteria) {
         return null;
-    }   
+    }
     
     public Uzytkownik getUser(String password, String login){
         System.out.println(password +"  "+login);
@@ -39,7 +39,7 @@ public class UzytkownikDao extends DAO<Uzytkownik>{
         return null;
     }
 
-    public Uzytkownik addUser(String firstname, String surname, String login,  String password, Date dataZalozeniaKonta, String email ){
+    public Uzytkownik addUser(String firstname, String surname, String login,  String password, Date dataZalozeniaKonta, String email, boolean admin){
         Session session = this.getSession();
         session.beginTransaction();
         Uzytkownik user = new Uzytkownik();
@@ -49,6 +49,7 @@ public class UzytkownikDao extends DAO<Uzytkownik>{
         user.setPassword(password);
         user.setDataZalozeniaKonta(dataZalozeniaKonta);
         user.setEmail(email);
+        user.setUprawnieniaAdministratora(admin);
         session.persist(user);
         session.getTransaction().commit();
         session.close();

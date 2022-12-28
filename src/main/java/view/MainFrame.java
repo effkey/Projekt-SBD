@@ -1,5 +1,9 @@
 package view;
 
+import dao.KategoriaDao;
+import dao.ProducentDao;
+import dao.ProduktDao;
+import dao.UzytkownikDao;
 import view.SacPackage.PanelCover;
 import view.SacPackage.PanelLoginAndRegister;
 import view.layouts.Details;
@@ -9,6 +13,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 import javax.swing.JPanel;
 // Brane z maven
@@ -22,8 +28,11 @@ import map.Producent;
 import map.Produkt;
 import map.Uzytkownik;
 import map.Zamowienie;
+import view.SacPackage.OrderPanel;
+import view.SacPackage.UzytForm;
 import view.layouts.CartLayout;
 import view.layouts.NewProduct;
+import view.layouts.WarehouseLayout;
 
 public class MainFrame extends javax.swing.JFrame {     // główny main na dole
 
@@ -44,25 +53,61 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
     //
 
     public MainFrame() {
+        test();
+        this.setTitle("Hardware Shop");
         this.setResizable(false);
-        this.panels = new JPanel[3];
+        this.panels = new JPanel[4];
         initComponents();
         init();
     }
-    
 
 // Z ShopFrame
+    public void refreshCategoryPanel() {
+        CartLayout tmp = (CartLayout) this.panels[2];
+        tmp.refreshCategoryPanel();
+    }
+
+    public void refreshShop(Produkt produkt) {
+        ShopLayout sl = (ShopLayout) this.panels[0];
+        sl.refreshProduct(produkt);
+    }
+
     public void showProductPanel(Produkt produkt) {
-        this.panels[1] = new Details(produkt, user.isUprawnieniaAdministratora());
+        this.panels[1] = new Details(produkt, user.isUprawnieniaAdministratora(), false);
         this.panels[0].setVisible(false);
         this.add(panels[1]);
+    }
+
+    public void showProductPanelCart(Produkt produkt) {
+        this.panels[1] = new Details(produkt, user.isUprawnieniaAdministratora(), true);
+        this.panels[2].setVisible(false);
+        this.add(panels[1]);
+    }
+
+    public void showCompleteOrder() {
+        this.panels[2].setVisible(false);
+        this.panels[1] = new OrderPanel();
+        this.add(panels[1]);
+    }
+
+    public void showUserSettings() {
+        this.panels[0].setVisible(false);
+        this.panels[3].setVisible(true);
+        this.add(this.panels[3]);
+        this.pack();
+        setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH); 
+    }
+
+    public void returnToCart() {
+        this.remove(this.panels[1]);
+        this.panels[2].setVisible(true);
     }
 
     public void returnToShop() {
         this.remove(this.panels[1]);
         this.panels[0].setVisible(true);
     }
-    
+
     public void returnToShopFromCart() {
         this.panels[2].setVisible(false);
         this.panels[0].setVisible(true);
@@ -87,151 +132,72 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
         this.panels[0].setVisible(false);
         this.panels[2].setVisible(true);
     }
-    
-    public void addProductToCart(Produkt produkt){
+
+    public void showWarehouse() {
+        this.add(this.panels[2]);
+        this.panels[0].setVisible(false);
+        this.panels[2].setVisible(true);
+    }
+
+    public void addProductToCart(Produkt produkt) {
         CartLayout panel = (CartLayout) this.panels[2];
         panel.addProduct(produkt);
+    }
+
+    public void showOrderDetails() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     public void loadPanels(Uzytkownik user) {
         this.user = user;
         this.panels[0] = new ShopLayout(user.isUprawnieniaAdministratora());
-        this.panels[2] = new CartLayout();
+        loadProducts();
+        if (user.isUprawnieniaAdministratora()) {
+            this.panels[2] = new WarehouseLayout();
+        } else {
+            this.panels[2] = new CartLayout();
+        }
+        this.panels[3] = new UzytForm(user);
+
         this.add(this.panels[2]);
-        this.panels[2].setVisible(false);
+        this.add(this.panels[3]);
         this.add(this.panels[0]);
-        test();
+
+        this.panels[2].setVisible(false);
+        this.panels[3].setVisible(false);
+        this.panels[0].setVisible(true);
+    }
+
+    private void loadProducts() {
+        ProduktDao dao = new ProduktDao();
+        ArrayList<Produkt> produkty = (ArrayList<Produkt>) dao.getAll();
+        for (Produkt produkt : produkty) {
+            if (user.isUprawnieniaAdministratora()) {
+                this.addProduct(produkt);
+            } else if (produkt.getLiczbaSztuk() > 0) {
+                this.addProduct(produkt);
+            }
+        }
+    }
+
+    public void addProduct(Produkt produkt) {
+        ShopLayout sl = (ShopLayout) this.panels[0];
+        sl.addProduct(produkt);
     }
 
     private void test() {
-        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Pamięć Kingston FURY™ Beast DDR5 oferuje najnowszą i najbardziej zaawansowaną technologię dla platform do gier nowej generacji. "
-                + "Zapewniając jeszcze większą szybkość, pojemność i niezawodność, pamięć DDR5 oferuje wiele udoskonalonych rozwiązań, takich jak: "
-                + "wbudowany układ ECC (ODECC), który odpowiada za lepszą stabilność przy ekstremalnych szybkościach, dwa 32-bitowe podkanały "
-                + "zwiększające wydajność oraz wbudowany układ zarządzania energią (PMIC), aby dostarczyć ją tam, gdzie jest najbardziej potrzebna.\r\n"
-                + "\r\n"
-                + "Niezależnie od tego, czy przesuwasz granice w grze, wybierając najwyższe ustawienia, streamujesz na żywo w rozdzielczości 4K+, "
-                + "czy pracujesz nad dużymi animacjami z renderowaniem 3D, pamięć Kingston FURY Beast DDR5 pozwoli Ci się wznieść na odpowiedni poziom, "
-                + "łącząc efektowny wygląd z bezkompromisową wydajnością.",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
-                + "\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
-                + "\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
-                + "\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
-                + "\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
-                + "\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
-                + "\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Pamięć Kingston FURY™ Beast DDR5 oferuje najnowszą i najbardziej zaawansowaną technologię dla platform do gier nowej generacji. "
-                + "Zapewniając jeszcze większą szybkość, pojemność i niezawodność, pamięć DDR5 oferuje wiele udoskonalonych rozwiązań, takich jak: "
-                + "wbudowany układ ECC (ODECC), który odpowiada za lepszą stabilność przy ekstremalnych szybkościach, dwa 32-bitowe podkanały "
-                + "zwiększające wydajność oraz wbudowany układ zarządzania energią (PMIC), aby dostarczyć ją tam, gdzie jest najbardziej potrzebna.\r\n"
-                + "\r\n"
-                + "Niezależnie od tego, czy przesuwasz granice w grze, wybierając najwyższe ustawienia, streamujesz na żywo w rozdzielczości 4K+, "
-                + "czy pracujesz nad dużymi animacjami z renderowaniem 3D, pamięć Kingston FURY Beast DDR5 pozwoli Ci się wznieść na odpowiedni poziom, "
-                + "łącząc efektowny wygląd z bezkompromisową wydajnością.",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze z 8 GB do 16 GB.\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
-                + "\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
-        ((ShopLayout) this.panels[0]).addProduct(new Produkt("Pamięć ram DDR4", 69.99f,
-                "Rozszerzenie pamięci RAM DDR3/DDR4 DIMM w komputerze  z 8 GB do 16 GB.\r\n"
-                + "\r\n"
-                + "Dotyczy komputerów które posiadają minimum 4 sloty na pamięć RAM\r\n"
-                + "\r\n"
-                + "Dotyczy tylko sprzętu zakupionego poprzez aukcje Allegro z Naszego sklepu w momencie zakupu produktu głównego",
-                0f, new Kategoria(), new Producent(), 23, "ram.jpg"));
+//        KategoriaDao dao1 = new KategoriaDao();
+//        dao1.addKategoria("Ram", "Pamięć o dostępie swobodnym, pamięć główna, RAM");
+//        dao1.addKategoria("Płyta główna", "Obwód drukowany urządzenia elektronicznego, na którym montuje się najważniejsze elementy, umożliwiając komunikację wszystkim pozostałym komponentom i modułom");
+//        dao1.addKategoria("Procesor", "Sekwencyjne urządzenie cyfrowe, które pobiera dane z pamięci operacyjnej lub strumienia danych, interpretuje je i wykonuje jako rozkazy, zwracając dane do pamięci lub wyjściowego strumienia danych");
+//        dao1.addKategoria("Zasilacz", "Urządzenie służące do dopasowania dostępnego napięcia do wymagań zasilanego urządzenia");
+//        
+//        ProducentDao dao2 = new ProducentDao();
+//        dao2.addProducent("ASUS", "Tajwan", "Tajwańskie przedsiębiorstwo zajmujące się produkcją elektroniki, głównie: płyt głównych, kart graficznych, laptopów, smartfonów, tabletów, komputerów stacjonarnych oraz napędów optycznych");
+//        
+//        UzytkownikDao dao3 = new UzytkownikDao();
+//        dao3.addUser("Dawid", "Bartosiuk", "b", "b", new Date(), "dawid@bartosiuk.pl", true);
     }
-    //
 
     private void init() {
         layout = new MigLayout("fill, insets 0");    // insets 0 aby nie było dziwnych odstępów np. od panel covera, można też po insets dopisać ",debug" aby zobaczyć krawędzie layoutu
@@ -407,4 +373,5 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane Background;
     // End of variables declaration//GEN-END:variables
+
 }

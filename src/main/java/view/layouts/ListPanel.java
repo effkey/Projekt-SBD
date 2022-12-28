@@ -1,5 +1,6 @@
 package view.layouts;
 
+import dao.ProduktDao;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
@@ -10,6 +11,10 @@ import java.util.List;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -18,7 +23,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import map.Kategoria;
 import map.Produkt;
 
 import view.Image;
@@ -26,11 +33,11 @@ import view.MainFrame;
 
 public class ListPanel extends JPanel implements ActionListener {
 
-    private int imageWidth = 400;
-    private int imageHeight = 300;
+    private static int imageWidth = 400;
+    private static int imageHeight = 300;
     public final Dimension defaultResolution = new Dimension(2560, 1440);
     private final Dimension curResolution;
-    public float scale = 1;
+    public static float scale = 1;
     private final boolean admin;
 
     private final Font font;
@@ -38,6 +45,8 @@ public class ListPanel extends JPanel implements ActionListener {
     private final List<JButton> addToCartButton = new ArrayList<>();
     private final List<JButton> toDetailsButton = new ArrayList<>();
     private final List<JTextArea> shortTextLabel = new ArrayList<>();
+    private final List<JTextField> priceField = new ArrayList<>();
+    private final List<JTextField> numOfProductsField = new ArrayList<>();
     private final List<Produkt> list = new ArrayList<Produkt>();
 
     public ListPanel(Dimension dim, int cardinality, boolean admin) {
@@ -70,11 +79,14 @@ public class ListPanel extends JPanel implements ActionListener {
         System.out.println(scale);
         this.imageWidth = (int) (this.imageWidth * scale);
         this.imageHeight = (int) (this.imageHeight * scale);
-        this.setPreferredSize(new Dimension(dim.width - ShopLayout.borderPx * 10, cardinality * imageHeight));
+        this.setPreferredSize(new Dimension(dim.width - ShopLayout.borderPx * 10, cardinality / 2 * imageHeight));
         font = new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 40));
         if (this.admin) {
             JButton add_product = new JButton("Dodaj nowy produkt");
-            add_product.setBounds((int) (1 / scale * imageWidth / 4), (int) (1 / scale * imageHeight / 6), this.getPreferredSize().width - imageWidth + ShopLayout.borderPx + imageHeight / 2, imageHeight);
+            add_product.setBounds((int) (imageWidth / 4),
+                    (int) (imageHeight / 6),
+                    (int) (6.84 * imageHeight),
+                    imageHeight);
             add_product.setFont(font);
             add_product.setBackground(Color.black);
             add_product.setForeground(Color.WHITE);
@@ -95,32 +107,88 @@ public class ListPanel extends JPanel implements ActionListener {
     public void addProdukt(Produkt produkt) {
         int listSize = this.list.size();
         if (admin) {
-            listSize = this.list.size() + 1;
+            listSize = this.list.size() + 2;
         }
         JButton addToCart;
         JButton toDetails;
         JTextArea shortText;
+        JTextField price;
+        JTextField numOfProducts;
 
-        addToCart = new JButton(Image.CART_ADD.icon);
-        toDetails = new JButton(Image.DETAILS.icon);
-        if (produkt.getOpis().length() > 100) {
-            shortText = new JTextArea(produkt.getNazwaProduktu() + "\n\n" + produkt.getOpis().substring(0, 100) + "...");
+        if (!admin) {
+            addToCart = new JButton(Image.CART_ADD.icon);
         } else {
-            shortText = new JTextArea(produkt.getNazwaProduktu() + "\n\n" + produkt.getOpis());
+            addToCart = new JButton(Image.REMOVE.icon);
         }
+        toDetails = new JButton(Image.DETAILS.icon);
+//        if (produkt.getOpis().length() > 100) {
+//            shortText = new JTextArea(produkt.getNazwaProduktu() + "\n\n" + produkt.getOpis().substring(0, 100) + "...");
+//        } else {
+
+        String pr = String.valueOf(produkt.getCena());
+        if (produkt.getCena() * 100 % 10 == 0) {
+            pr += "0";
+        }
+        shortText = new JTextArea(produkt.getNazwaProduktu());
+        price = new JTextField("Cena: " + pr);
+        numOfProducts = new JTextField("Ilość: " + String.valueOf(produkt.getLiczbaSztuk()));
+        price.setFont(font);
+        numOfProducts.setFont(font);
+//        }
 
         shortText.setFont(font);
         shortText.setLineWrap(true);
         shortText.setWrapStyleWord(true);
         shortText.setEditable(false);
-//		shortText.setIgnoreRepaint(true);
 
-        shortText.setBounds(imageWidth / 4 + imageWidth + ShopLayout.borderPx, listSize * imageHeight * 6 / 5 + imageHeight / 6,
-                this.getPreferredSize().width - 2 * imageWidth, imageHeight);
-        toDetails.setBounds(this.getPreferredSize().width - 3 * imageWidth / 4 + 2 * ShopLayout.borderPx, 3 / 2 * listSize * imageHeight * 6 / 5 + imageHeight / 6 + imageHeight / 2 + ShopLayout.borderPx,
-                imageHeight / 2 - ShopLayout.borderPx, imageHeight / 2 - ShopLayout.borderPx);
-        addToCart.setBounds(this.getPreferredSize().width - 3 * imageWidth / 4 + 2 * ShopLayout.borderPx, 3 / 2 * listSize * imageHeight * 6 / 5 + imageHeight / 6,
-                imageHeight / 2 - ShopLayout.borderPx, imageHeight / 2 - ShopLayout.borderPx);
+        price.setEditable(false);
+        numOfProducts.setEditable(false);
+
+        if (listSize % 2 == 1) {
+            listSize /= 2;
+            shortText.setBounds((int) (imageWidth / 4 + imageWidth + ShopLayout.borderPx + 3.5 * imageHeight),
+                    listSize * imageHeight * 6 / 5 + imageHeight / 6,
+                    2 * imageHeight,
+                    imageHeight / 2 - ShopLayout.borderPx / 2);
+            toDetails.setBounds((int) (imageWidth / 4 + imageWidth + ShopLayout.borderPx + imageHeight / 2 - ShopLayout.borderPx / 2 + 3.5 * imageHeight),
+                    listSize * imageHeight * 6 / 5 + imageHeight / 6 + imageHeight / 2 + ShopLayout.borderPx / 2,
+                    imageHeight / 2 - ShopLayout.borderPx,
+                    imageHeight / 2 - ShopLayout.borderPx);
+            addToCart.setBounds((int) (imageWidth / 4 + imageWidth + ShopLayout.borderPx + 3.5 * imageHeight),
+                    listSize * imageHeight * 6 / 5 + imageHeight / 6 + imageHeight / 2 + ShopLayout.borderPx / 2,
+                    imageHeight / 2 - ShopLayout.borderPx,
+                    imageHeight / 2 - ShopLayout.borderPx);
+            price.setBounds((int) (imageWidth / 4 + imageWidth + imageHeight + ShopLayout.borderPx / 2 + 3.5 * imageHeight),
+                    listSize * imageHeight * 6 / 5 + imageHeight / 6 + imageHeight / 2 + ShopLayout.borderPx / 2,
+                    imageHeight,
+                    (imageHeight / 2 - ShopLayout.borderPx) / 2);
+            numOfProducts.setBounds((int) (imageWidth / 4 + imageWidth + imageHeight + ShopLayout.borderPx / 2 + 3.5 * imageHeight),
+                    listSize * imageHeight * 6 / 5 + imageHeight / 6 + imageHeight / 2 + ShopLayout.borderPx / 2 + (imageHeight / 2 - ShopLayout.borderPx) / 2,
+                    imageHeight,
+                    (imageHeight / 2 - ShopLayout.borderPx) / 2);
+        } else {
+            listSize /= 2;
+            shortText.setBounds(imageWidth / 4 + imageWidth + ShopLayout.borderPx,
+                    listSize * imageHeight * 6 / 5 + imageHeight / 6,
+                    2 * imageHeight,
+                    imageHeight / 2 - ShopLayout.borderPx / 2);
+            toDetails.setBounds(imageWidth / 4 + imageWidth + ShopLayout.borderPx + imageHeight / 2 - ShopLayout.borderPx / 2,
+                    listSize * imageHeight * 6 / 5 + imageHeight / 6 + imageHeight / 2 + ShopLayout.borderPx / 2,
+                    imageHeight / 2 - ShopLayout.borderPx,
+                    imageHeight / 2 - ShopLayout.borderPx);
+            addToCart.setBounds(imageWidth / 4 + imageWidth + ShopLayout.borderPx,
+                    listSize * imageHeight * 6 / 5 + imageHeight / 6 + imageHeight / 2 + ShopLayout.borderPx / 2,
+                    imageHeight / 2 - ShopLayout.borderPx,
+                    imageHeight / 2 - ShopLayout.borderPx);
+            price.setBounds(imageWidth / 4 + imageWidth + imageHeight + ShopLayout.borderPx / 2,
+                    listSize * imageHeight * 6 / 5 + imageHeight / 6 + imageHeight / 2 + ShopLayout.borderPx / 2,
+                    imageHeight,
+                    (imageHeight / 2 - ShopLayout.borderPx) / 2);
+            numOfProducts.setBounds(imageWidth / 4 + imageWidth + imageHeight + ShopLayout.borderPx / 2,
+                    listSize * imageHeight * 6 / 5 + imageHeight / 6 + imageHeight / 2 + ShopLayout.borderPx / 2 + (imageHeight / 2 - ShopLayout.borderPx) / 2,
+                    imageHeight,
+                    (imageHeight / 2 - ShopLayout.borderPx) / 2);
+        }
 
         addToCart.addActionListener(this);
         toDetails.addActionListener(this);
@@ -133,22 +201,41 @@ public class ListPanel extends JPanel implements ActionListener {
         this.addToCartButton.add(addToCart);
         this.shortTextLabel.add(shortText);
         this.toDetailsButton.add(toDetails);
-
-        addToCart.setVisible(true);
-        shortText.setVisible(true);
-        toDetails.setVisible(true);
+        this.numOfProductsField.add(numOfProducts);
+        this.priceField.add(price);
 
         this.add(shortText);
         this.add(addToCart);
         this.add(toDetails);
+        this.add(price);
+        this.add(numOfProducts);
 
         list.add(produkt);
         this.repaint();
 //		System.out.println("DODAWANE JEST, ileIchJest: " + listSize);
     }
 
-    public void removeProdukt(Produkt produkt) {
-        list.remove(produkt);
+    public void removeProdukt(int index) {
+        int max = this.list.size() - 1;
+        this.remove(this.addToCartButton.get(max));
+        this.addToCartButton.remove(max);
+        this.remove(this.toDetailsButton.get(max));
+        this.toDetailsButton.remove(max);
+        this.remove(this.numOfProductsField.get(max));
+        this.numOfProductsField.remove(max);
+        this.remove(this.shortTextLabel.get(max));
+        this.shortTextLabel.remove(max);
+        this.remove(this.priceField.get(max));
+        this.priceField.remove(max);
+        this.list.remove(index);
+
+        for (int i = index; i < this.shortTextLabel.size() - 1; i++) {
+            this.shortTextLabel.get(i).setText(this.shortTextLabel.get(i + 1).getText());
+            this.priceField.get(i).setText(this.shortTextLabel.get(i + 1).getText());
+            this.numOfProductsField.get(i).setText(this.numOfProductsField.get(i + 1).getText());
+        }
+        this.revalidate();
+        this.repaint();
     }
 
     @Override
@@ -165,14 +252,27 @@ public class ListPanel extends JPanel implements ActionListener {
         g2d.setFont(font);
         int i = 0;
         if (admin) {
-            i = 1;
+            i = 2;
         }
         for (Produkt produkt : list) {
-            int posX = (int) (1 / scale * imageWidth / 4), posY = (int) (i * 1 / scale * imageHeight * 6 / 5 + 1 / scale * imageHeight / 6);
-            g2d.drawImage(new ImageIcon("src/products/" + this.list.get(this.list.size() - 1).getNazwaObrazka()).getImage(), posX, posY, null);
+            int posX = (int) (1 / scale * imageWidth / 4), posY = (int) (i / 2 * 1 / scale * imageHeight * 6 / 5 + 1 / scale * imageHeight / 6);
+            if (i % 2 == 0) {
+                if (!g2d.drawImage(new ImageIcon("src/main/products/" + produkt.getNazwaObrazka()).getImage(), posX, posY, null)) {
+                    g2d.drawImage(Image.EMPTY.icon.getImage(), posX, posY, null);
+                }
+            } else {
+                posX += 3.5 * imageHeight / scale;
+                if (!g2d.drawImage(new ImageIcon("src/main/products/" + produkt.getNazwaObrazka()).getImage(), posX, posY, null)) {
+                    g2d.drawImage(Image.EMPTY.icon.getImage(), posX, posY, null);
+                }
+            }
             i++;
         }
+    }
 
+    public void setList(List<Kategoria> katList) {
+        this.removeAll();
+        this.list.clear();
     }
 
     @Override
@@ -180,10 +280,17 @@ public class ListPanel extends JPanel implements ActionListener {
         int i = 0;
         for (JButton but : this.addToCartButton) {
             if (e.getSource() == but) {
-                this.addToCartPopUp();
-                System.out.println("Dodano do koszyka: " + this.list.get(i).getNazwaProduktu());
-                MainFrame mf = (MainFrame) (JFrame) SwingUtilities.getWindowAncestor(this);
-                mf.addProductToCart(this.list.get(i));
+                if (admin) {
+                    System.out.println("Usunięto: " + this.list.get(i).getNazwaProduktu());
+                    ProduktDao dao = new ProduktDao();
+                    dao.delete(this.list.get(i));
+                    this.removeProdukt(i);
+                } else {
+                    this.addToCartPopUp();
+                    System.out.println("Dodano do koszyka: " + this.list.get(i).getNazwaProduktu());
+                    MainFrame mf = (MainFrame) (JFrame) SwingUtilities.getWindowAncestor(this);
+                    mf.addProductToCart(this.list.get(i));
+                }
             }
             i++;
         }
@@ -200,5 +307,23 @@ public class ListPanel extends JPanel implements ActionListener {
 
     private void addToCartPopUp() {
         JOptionPane.showMessageDialog(null, "Dodano produkt do koszyka", "", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    void refreshProduct(Produkt produkt) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getIdProduktu() == produkt.getIdProduktu()) {
+                this.numOfProductsField.get(i).setText("Ilość: " + String.valueOf(produkt.getLiczbaSztuk()));
+                this.shortTextLabel.get(i).setText(produkt.getNazwaProduktu());
+                String pr = String.valueOf(produkt.getCena());
+                if (produkt.getCena() * 10 % 10 == 0) {
+                    pr += "0";
+                }
+                this.priceField.get(i).setText("Cena: " + pr);
+            }
+        }
+    }
+    
+    public static Dimension getImageDimension(){
+        return new Dimension(imageWidth, imageHeight);
     }
 }

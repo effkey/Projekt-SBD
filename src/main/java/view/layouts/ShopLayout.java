@@ -1,24 +1,36 @@
 package view.layouts;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
+import javax.swing.DefaultListModel;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import map.Kategoria;
 import map.Produkt;
+import dao.KategoriaDao;
+import java.util.ArrayList;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import view.Image;
 import view.MainFrame;
+import static view.layouts.ListPanel.scale;
 
 public class ShopLayout extends JPanel implements ActionListener {
 
@@ -30,8 +42,10 @@ public class ShopLayout extends JPanel implements ActionListener {
     private JPanel upPanel;
     private JButton logOut;
     private JButton cart;
+    private JButton user;
 
-    private JPanel categoryPanel = new JPanel();
+    private JPanel categoryPanel;
+    private JList<String> list;
     private JComboBox cardinality;
     private JComboBox category;
 
@@ -42,21 +56,30 @@ public class ShopLayout extends JPanel implements ActionListener {
         this.setLayout(null);
         this.setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
         this.setBackground(Color.WHITE);
-        this.upPanel = new JPanel(){
+        this.upPanel = new JPanel() {
             @Override
             public void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g;
-                g2d.drawImage(Image.LOGO.icon.getImage(), Toolkit.getDefaultToolkit().getScreenSize().width/2-7*borderPx, -borderPx, null);
+                g2d.drawImage(Image.LOGO.icon.getImage(),
+                        Toolkit.getDefaultToolkit().getScreenSize().width / 2 - 7 * borderPx,
+                        -borderPx,
+                        null
+                );
             }
         };
         this.categoryPanel = new JPanel();
+        BorderLayout layout = new BorderLayout();
+//      layout.setHgap(10);
+//      layout.setVgap(10);
 
+        categoryPanel.setLayout(layout);
         this.makeMainPanel();
 
         this.upPanel.setLayout(null);
-        this.categoryPanel.setLayout(null);
+//        this.categoryPanel.setLayout(BorderLayout);
 
+//        this.categoryPanel.setVisible(true);
         this.scroll = new JScrollPane(mainPanel);
         this.scroll.setVisible(true);
         this.scroll.getVerticalScrollBar().setUnitIncrement(16);
@@ -79,12 +102,49 @@ public class ShopLayout extends JPanel implements ActionListener {
         this.mainPanel.addProdukt(produkt);
     }
 
-    public void removeProduct(Produkt produkt) {
-        this.mainPanel.removeProdukt(produkt);
-    }
-
     private void makeCategoryPanel() {
+        if (admin) {
+            JButton addCategory;
+            // dodaj przycisk umożliwiający dodawanie kategorii
+            // do tego jakiś popup
+            // wymyśl usuwanie kategorii przez admina
+            // pov: obsługa kategorii też nie działa więc xd
+            // do tego lista producentów
+            // wymyśl coś
+        }
         this.categoryPanel.setBackground(Color.black);
+        KategoriaDao dao = new KategoriaDao();
+        List<Kategoria> kategorie = dao.getAll();
+        DefaultListModel<String> model = new DefaultListModel<>();
+        this.list = new JList<>(model);
+        list.setForeground(Color.white);
+        list.setBackground(Color.black);
+        list.setSelectionBackground(Color.gray);
+        list.setFont(new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 40)));
+        for (Kategoria kategoria : kategorie) {
+            model.addElement(kategoria.getNazwaKategorii());
+            System.out.println(kategoria.getNazwaKategorii());
+        }
+        this.categoryPanel.add(list, BorderLayout.CENTER);
+        this.list.setSelectionBackground(new Color(188, 69, 69));
+        this.list.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                ListSelectionModel lsm = (ListSelectionModel) e.getSource();
+                ArrayList<Kategoria> katList = null;
+                if (!lsm.isSelectionEmpty()) {
+                    int f = lsm.getMinSelectionIndex();
+                    int l = lsm.getMaxSelectionIndex();
+                    katList = new ArrayList<Kategoria>();
+                    for (int i = f; i < l; i++) {
+                        katList.add(kategorie.get(i));
+                    }
+                }
+
+                mainPanel.setList(katList);
+            }
+
+        });
     }
 
     private void makeMainPanel() {
@@ -100,15 +160,36 @@ public class ShopLayout extends JPanel implements ActionListener {
         this.logOut.setBounds(borderPx, borderPx, this.upPanel.getPreferredSize().height - 2 * ShopLayout.borderPx, this.upPanel.getPreferredSize().height - 2 * ShopLayout.borderPx);
         this.logOut.addActionListener(this);
 
-        this.cart = new JButton(Image.CART.icon);
+        this.user = new JButton(Image.USER.icon);
+        this.user.setBackground(Color.black);
+        this.user.setBounds(this.upPanel.getPreferredSize().width - this.upPanel.getPreferredSize().height + 3 * this.borderPx - Image.USER.icon.getImage().getWidth(user), borderPx,
+                this.upPanel.getPreferredSize().height - 2 * ShopLayout.borderPx,
+                this.upPanel.getPreferredSize().height - 2 * ShopLayout.borderPx);
+//                .setBounds(borderPx, borderPx, 
+//                this.upPanel.getPreferredSize().height - 2 * ShopLayout.borderPx/*-Image.USER.icon.getImage().getWidth(user)*/, 
+//                this.upPanel.getPreferredSize().height - 2 * ShopLayout.borderPx);
+        this.user.addActionListener(this);
+
+        this.cart = new JButton();
+        if (admin) {
+            this.cart.setIcon(Image.WAREHOUSE.icon);
+        } else {
+            this.cart.setIcon(Image.CART.icon);
+        }
         this.cart.setBounds(this.upPanel.getPreferredSize().width - this.upPanel.getPreferredSize().height + this.borderPx, borderPx,
-                this.upPanel.getPreferredSize().height - 2 * ShopLayout.borderPx, this.upPanel.getPreferredSize().height - 2 * ShopLayout.borderPx);
+                this.upPanel.getPreferredSize().height - 2 * ShopLayout.borderPx,
+                this.upPanel.getPreferredSize().height - 2 * ShopLayout.borderPx);
         this.cart.setBackground(Color.black);
         this.cart.addActionListener(this);
 
         this.upPanel.setBackground(Color.BLACK);
         this.upPanel.add(this.logOut);
         this.upPanel.add(this.cart);
+        this.upPanel.add(this.user);
+    }
+
+    public void refreshProduct(Produkt produkt) {
+        this.mainPanel.refreshProduct(produkt);
     }
 
     @Override
@@ -117,9 +198,20 @@ public class ShopLayout extends JPanel implements ActionListener {
             this.logOutPopUp();
         }
         if (e.getSource() == this.cart) {
-            System.out.println("Przechodzisz do koszyka");
+            if (!admin) {
+                System.out.println("Przechodzisz do koszyka");
+                MainFrame mf = (MainFrame) SwingUtilities.getWindowAncestor(this);
+                mf.showCart();
+            } else {
+                System.out.println("Przechodzisz do magazynów");
+                MainFrame mf = (MainFrame) SwingUtilities.getWindowAncestor(this);
+                mf.showWarehouse();
+            }
+        }
+
+        if (e.getSource() == this.user) {
             MainFrame mf = (MainFrame) SwingUtilities.getWindowAncestor(this);
-            mf.showCart();
+            mf.showUserSettings();
         }
     }
 

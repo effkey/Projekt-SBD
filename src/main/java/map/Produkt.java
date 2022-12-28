@@ -20,7 +20,7 @@ public class Produkt {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idProduktu", unique = true, nullable = false)
+    @Column(name = "idProdukt", unique = true, nullable = false)
     private int idProduktu;
 
     @Column(name = "nazwaProduktu", unique = true, nullable = false)
@@ -41,21 +41,17 @@ public class Produkt {
     @Column(name = "nazwaObrazka", unique = true, nullable = true)
     private String nazwaObrazka;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "Kategoria_idKategoria")
     private Kategoria kategoria;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "Producent_idProducent")
     private Producent producent;
 
-    //@OneToMany(mappedBy = "produkt")
-    //private List<SztukiProduktu> sztukiProduktu = new ArrayList<SztukiProduktu>();
     @ManyToMany(mappedBy = "produkt")
-    private List<Zamowienie> zamowienie = new ArrayList<Zamowienie>(); //nowe
+    private List<Zamowienie> zamowienie = new ArrayList<Zamowienie>(); 
 
-    //@OneToMany(mappedBy = "produkt")
-    //private List<ProduktMagazyn> produktMagazyn = new ArrayList<ProduktMagazyn>();
     @ManyToMany(mappedBy = "produkt")
     private List<Magazyn> magazyn = new ArrayList<Magazyn>();
 
@@ -75,8 +71,9 @@ public class Produkt {
 
     }
 
-    public void setIdProduktu(int idProduktu) {
+    public Produkt setIdProduktu(int idProduktu) {
         this.idProduktu = idProduktu;
+        return this;
     }
 
     public String getNazwaProduktu() {
@@ -177,6 +174,10 @@ public class Produkt {
 
     public int getIdProduktu() {
         return idProduktu;
+    }
+
+    public void setNazwaObrazka(String nazwaObrazka) {
+        this.nazwaObrazka = nazwaObrazka;
     }
 
 }
