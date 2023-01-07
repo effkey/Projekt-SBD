@@ -1,10 +1,8 @@
 package dao;
 
-import java.util.ArrayList;
 import java.util.Date;
 import map.Uzytkownik;
 import java.util.List;
-import map.Kategoria;
 import map.SposobRealizacji;
 import map.Uzytkownik;
 import org.hibernate.Session;
@@ -57,87 +55,5 @@ public class UzytkownikDao extends DAO<Uzytkownik>{
         session.close();
 
                 return null;
-    }
-    public Uzytkownik changeName(int ID, String name)
-    {
-        Session session = this.getSession();
-        session.beginTransaction();
-        Uzytkownik user =  null;
-        user = (Uzytkownik) session.get(Uzytkownik.class, ID);
-        user.setImie(name);
-        session.update(user);
-        session.getTransaction().commit();
-        session.close(); 
-        return null;
-    }
-        public Uzytkownik changeSurname(int ID, String surname)
-    {
-        Session session = this.getSession();
-        session.beginTransaction();
-        Uzytkownik user =  null;
-        user = (Uzytkownik) session.get(Uzytkownik.class, ID);
-        user.setNazwisko(surname);
-        session.update(user);
-        session.getTransaction().commit();
-        session.close(); 
-        return null;
-    }
-        
-        public Uzytkownik changeEmail(int ID, String email)
-    {
-        Session session = this.getSession();
-        session.beginTransaction();
-        Uzytkownik user =  null;
-        user = (Uzytkownik) session.get(Uzytkownik.class, ID);
-        user.setEmail(email);
-        session.update(user);
-        session.getTransaction().commit();
-        session.close();
-        return null;
-    }
-        
-        public Uzytkownik changePassword(int ID, String password)
-    {
-        Session session = this.getSession();
-        session.beginTransaction();
-        Uzytkownik user =  null;
-        user = (Uzytkownik) session.get(Uzytkownik.class, ID);
-        user.setPassword(password);
-        session.update(user);
-        session.getTransaction().commit();
-        session.close();
-        return null;
-    }
-        public Uzytkownik changeNickname(int ID, String nickname)
-    {
-        Session session = this.getSession();
-        session.beginTransaction();
-        Uzytkownik user =  null;
-        user = (Uzytkownik) session.get(Uzytkownik.class, ID);
-        user.setNickname(nickname);
-        session.update(user);
-        session.getTransaction().commit();
-        session.close();
-        return null;
-    }
-    
-    
-        public ArrayList<Uzytkownik> getAll() {
-        Session session = this.getSession();
-        session.beginTransaction();
-        ArrayList<Uzytkownik> cat = null;
-        cat = (ArrayList<Uzytkownik>) session.createQuery(
-                " select cat "
-                + "from map.Uzytkownik cat ")
-                .getResultList();
-        session.getTransaction().commit();
-        if (cat != null) {
-            return cat;
-        }
-
-        return null;
-    }
-        
-        
-        
+}
 }
