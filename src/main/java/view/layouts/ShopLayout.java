@@ -54,7 +54,7 @@ public class ShopLayout extends JPanel implements ActionListener {
     private JList<String> list;
     private JComboBox cardinality;
     private JComboBox category;
-    
+
     private JTextField nameField;
     private JTextArea descField;
 
@@ -79,16 +79,12 @@ public class ShopLayout extends JPanel implements ActionListener {
         };
         this.categoryPanel = new JPanel();
         BorderLayout layout = new BorderLayout();
-//      layout.setHgap(10);
-//      layout.setVgap(10);
 
         categoryPanel.setLayout(layout);
         this.makeMainPanel();
 
         this.upPanel.setLayout(null);
-//        this.categoryPanel.setLayout(BorderLayout);
 
-//        this.categoryPanel.setVisible(true);
         this.scroll = new JScrollPane(mainPanel);
         this.scroll.setVisible(true);
         this.scroll.getVerticalScrollBar().setUnitIncrement(16);
@@ -114,18 +110,22 @@ public class ShopLayout extends JPanel implements ActionListener {
     private void makeCategoryPanel() {
         if (admin) {
             this.addCategory = new JButton("<html>" + "  Dodaj" + "<br>" + "kategorię" + "</html>");
-//            addCategory = new JButton("<html>" + "This is a" + "<br>" + "swing button" + "</html>");
-            addCategory.setPreferredSize(new Dimension(60, 120));
+            addCategory.setPreferredSize(new Dimension(60, 60));
             this.addCategory.setFont(new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 40)));
-//            addCategory.setText();
-           this.categoryPanel.add(addCategory, BorderLayout.SOUTH); 
-           this.addCategory.addActionListener(this);
+            this.categoryPanel.add(addCategory, BorderLayout.NORTH);
+            this.addCategory.addActionListener(this);
             // dodaj przycisk umożliwiający dodawanie kategorii
             // do tego jakiś popup
             // wymyśl usuwanie kategorii przez admina
             // pov: obsługa kategorii też nie działa więc xd
             // do tego lista producentów
             // wymyśl coś
+        } else {
+            this.addCategory = new JButton("<html>" + "  Zastosuj" + "<br>" + "filtry" + "</html>");
+            addCategory.setPreferredSize(new Dimension(60, 60));
+            this.addCategory.setFont(new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 40)));
+            this.categoryPanel.add(addCategory, BorderLayout.NORTH);
+            this.addCategory.addActionListener(this);
         }
         this.categoryPanel.setBackground(Color.black);
         KategoriaDao dao = new KategoriaDao();
@@ -206,11 +206,11 @@ public class ShopLayout extends JPanel implements ActionListener {
     public void refreshProduct(Produkt produkt) {
         this.mainPanel.refreshProduct(produkt);
     }
-    
-    public void updateCategoryList(){
+
+    public void updateCategoryList() {
         DefaultListModel<String> model = new DefaultListModel<>();
 //        this.list = new JList<>(model);
-          this.list.setModel(model);
+        this.list.setModel(model);
 //        list.setForeground(Color.white);
 //        list.setBackground(Color.black);
 //        list.setSelectionBackground(Color.gray);
@@ -218,7 +218,7 @@ public class ShopLayout extends JPanel implements ActionListener {
 //        for (Kategoria kategoria : kategorie) {
 //            model.addElement(categoryName);
 //            System.out.println(kategoria.getNazwaKategorii());
-         KategoriaDao dao = new KategoriaDao();
+        KategoriaDao dao = new KategoriaDao();
         List<Kategoria> kategorie = dao.getAll();
 //        DefaultListModel<String> model = new DefaultListModel<>();
         this.list = new JList<>(model);
@@ -253,8 +253,26 @@ public class ShopLayout extends JPanel implements ActionListener {
             MainFrame mf = (MainFrame) SwingUtilities.getWindowAncestor(this);
             mf.showUserSettings();
         }
-        if (e.getSource() == this.addCategory) {
+        if (e.getSource() == this.addCategory && admin) {
+
             addedCategoryPopUp();
+        }
+        if (e.getSource() == this.addCategory && admin == false){
+//             int index = list.getSelectedIndex();
+//            System.out.println("Index Selected: " + index);
+//            String s = (String) list.getSelectedValue();
+//            System.out.println("Value Selected: " + s);
+
+
+            mainPanel.clearProductsPanel();
+            int[] selectedIndices = list.getSelectedIndices();
+//            String[] myArray = new String[50];
+            for (int i = 0; i < selectedIndices.length; i++) {
+//                myArray[i] = String.valueOf(jList1.getModel().getElementAt(selectedIndices[i]));
+                System.out.println(list.getModel().getElementAt(selectedIndices[i]));
+//                    if(   list.getModel().getElementAt(selectedIndices[i]))
+                mainPanel.filterProducts(list.getModel().getElementAt(selectedIndices[i]));
+            }
         }
     }
 
@@ -290,9 +308,9 @@ public class ShopLayout extends JPanel implements ActionListener {
         this.descField = new JTextArea("Wpisz opis kategorii", 5, 5);
         this.descField.setWrapStyleWord(true);
         this.descField.setLineWrap(true);
-        
+
         JScrollPane scrollPane = new JScrollPane(descField);
-        scrollPane.setPreferredSize(new Dimension(300,125));
+        scrollPane.setPreferredSize(new Dimension(300, 125));
         JPanel myPanel = new JPanel();
         myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.Y_AXIS));
         myPanel.add(new JLabel("Nazwa:"));
@@ -305,13 +323,13 @@ public class ShopLayout extends JPanel implements ActionListener {
                 "Podaj nazwę i opis kategorii", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             KategoriaDao dao = new KategoriaDao();
-            dao.addKategoria(nameField.getText(),descField.getText());
+            dao.addKategoria(nameField.getText(), descField.getText());
             updateCategoryList();
 //            this.makeCategoryPanel();
 //            this.list.addElement(nameField.getText());
 //            this.revalidate();
             this.list.repaint();
         }
-        
+
     }
 }
