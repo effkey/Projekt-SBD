@@ -16,7 +16,7 @@ public class KategoriaDao extends DAO<Kategoria> {
         this.setmodelClass(map.Kategoria.class);
     }
 
-    public List<Kategoria> getAll() {
+    public ArrayList<Kategoria> getAll() {
         Session session = this.getSession();
         session.beginTransaction();
         ArrayList<Kategoria> cat = null;

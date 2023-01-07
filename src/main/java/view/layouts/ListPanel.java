@@ -33,8 +33,8 @@ import view.MainFrame;
 
 public class ListPanel extends JPanel implements ActionListener {
 
-    private int imageWidth = 400;
-    private int imageHeight = 300;
+    private static int imageWidth = 400;
+    private static int imageHeight = 300;
     public final Dimension defaultResolution = new Dimension(2560, 1440);
     private final Dimension curResolution;
     public static float scale = 1;
@@ -83,8 +83,8 @@ public class ListPanel extends JPanel implements ActionListener {
         font = new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 40));
         if (this.admin) {
             JButton add_product = new JButton("Dodaj nowy produkt");
-            add_product.setBounds((int) (1 / scale * imageWidth / 4),
-                    (int) (1 / scale * imageHeight / 6),
+            add_product.setBounds((int) (imageWidth / 4),
+                    (int) (imageHeight / 6),
                     (int) (6.84 * imageHeight),
                     imageHeight);
             add_product.setFont(font);
@@ -126,7 +126,7 @@ public class ListPanel extends JPanel implements ActionListener {
 //        } else {
 
         String pr = String.valueOf(produkt.getCena());
-        if (produkt.getCena() * 10 % 10 == 0) {
+        if (produkt.getCena() * 100 % 10 == 0) {
             pr += "0";
         }
         shortText = new JTextArea(produkt.getNazwaProduktu());
@@ -321,5 +321,9 @@ public class ListPanel extends JPanel implements ActionListener {
                 this.priceField.get(i).setText("Cena: " + pr);
             }
         }
+    }
+    
+    public static Dimension getImageDimension(){
+        return new Dimension(imageWidth, imageHeight);
     }
 }

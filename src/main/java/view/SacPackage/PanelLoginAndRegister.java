@@ -46,7 +46,7 @@ public class PanelLoginAndRegister extends JPanel {
     }
 
     private void initRegister() {
-        register.setLayout(new MigLayout("wrap", "push[center]push", "push[]25[]10[]10[]25[]push"));  // push[center] aby wszystko do środka kolumny w layoucie, push[] do środka rzędu
+        register.setLayout(new MigLayout("wrap", "push[center]push", "push[]25[]10[]10[]10[]10[]10[]25[]push"));  // push[center] aby wszystko do środka kolumny w layoucie, push[] do środka rzędu
         JLabel label = new JLabel("Utwórz konto");
         label.setFont(new Font("sansserif", 1, 30));
         label.setForeground(new Color(196, 53, 53));    // 196, 53, 53 - czerwony do tekstu
@@ -59,7 +59,7 @@ public class PanelLoginAndRegister extends JPanel {
 
         MyTextField txtname = new MyTextField();
         txtname.setPrefixIcon(new ImageIcon("src/main/icons/user_login.png"));
-        txtname.setHint("Imie");
+        txtname.setHint("Imię");
         register.add(txtname, "w 60%");
 
         MyTextField txtsurname = new MyTextField();
@@ -75,14 +75,11 @@ public class PanelLoginAndRegister extends JPanel {
         txtPassReg = new MyPasswordField();
         txtPassReg.setPrefixIcon(new ImageIcon("src/main/icons/password.png"));
         txtPassReg.setHint("Hasło");
-        register.add(txtPassReg, "w 60%");
-        
-        // TRZEBA OGARNĄĆ ŻEBY TE DANE WYŚWIETLANE BYŁY W TYCH SAMYCH ODSTĘPACH
-        
+        register.add(txtPassReg, "w 60%");        
 
         MyPasswordField txtPass2 = new MyPasswordField();
         txtPass2.setPrefixIcon(new ImageIcon("src/main/icons/password.png"));
-        txtPass2.setHint("Powtorz haslo");
+        txtPass2.setHint("Powtórz hasło");
         register.add(txtPass2, "w 60%");
 
         Button cmd = new Button();
@@ -114,7 +111,7 @@ public class PanelLoginAndRegister extends JPanel {
         login.add(label);
 
         txtUserLog = new MyTextField();
-//        txtUserLog.setPrefixIcon(new ImageIcon("email.png"));
+        txtUserLog.setPrefixIcon(new ImageIcon("src/main/icons/user_login.png"));
         txtUserLog.setHint("Nazwa Użytkownika");
         login.add(txtUserLog, "w 60%");
 

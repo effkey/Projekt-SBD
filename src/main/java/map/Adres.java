@@ -32,7 +32,7 @@ public class Adres {
 	private String nrBudynku;
 	
 	@Column(name = "nrLokalu", nullable = true)
-	private int nrLokalu;
+	private Integer nrLokalu;
 	
 	@OneToMany(mappedBy = "adres")
 	private List<Zamowienie> zamowienie = new ArrayList<Zamowienie>();
@@ -91,10 +91,10 @@ public class Adres {
 	}
 	
 	
-	public int getNrLokalu() {
+	public Integer getNrLokalu() {
 		return nrLokalu;
 	}
-	public void setNrLokalu(int nrLokalu) {
+	public void setNrLokalu(Integer nrLokalu) {
 		this.nrLokalu = nrLokalu;
 	}
 
@@ -105,5 +105,11 @@ public class Adres {
 	public void setZamowienie(List<Zamowienie> zamowienie) {
 		this.zamowienie = zamowienie;
 	}
+
+    @Override
+    public String toString() {
+        return "miasto=" + miasto + ", kodPocztowy=" + kodPocztowy 
+                + ", ulica=" + ulica + ", nrBudynku=" + nrBudynku + ", nrLokalu=" + nrLokalu;
+    }
 	
 }

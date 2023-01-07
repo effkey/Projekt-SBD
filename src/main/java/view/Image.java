@@ -14,6 +14,7 @@ public enum Image {
         REMOVE(new ImageIcon("src/main/images/REMOVE.png")),
         SAVE(new ImageIcon("src/main/images/save.png")),
         EDIT_SAVE(new ImageIcon("src/main/images/edit_save.png")),
+        WAREHOUSE(new ImageIcon("src/main/images/warehouse.png")),
         EMPTY(new ImageIcon("src/main/images/empty_image.png"));
 	
 	public ImageIcon icon;

@@ -32,6 +32,7 @@ import view.SacPackage.OrderPanel;
 import view.SacPackage.UzytForm;
 import view.layouts.CartLayout;
 import view.layouts.NewProduct;
+import view.layouts.WarehouseLayout;
 
 public class MainFrame extends javax.swing.JFrame {     // główny main na dole
 
@@ -92,6 +93,9 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
     public void showUserSettings() {
         this.panels[0].setVisible(false);
         this.panels[3].setVisible(true);
+        this.add(this.panels[3]);
+        this.pack();
+        setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH); 
     }
 
     public void returnToCart() {
@@ -129,6 +133,12 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
         this.panels[2].setVisible(true);
     }
 
+    public void showWarehouse() {
+        this.add(this.panels[2]);
+        this.panels[0].setVisible(false);
+        this.panels[2].setVisible(true);
+    }
+
     public void addProductToCart(Produkt produkt) {
         CartLayout panel = (CartLayout) this.panels[2];
         panel.addProduct(produkt);
@@ -142,7 +152,11 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
         this.user = user;
         this.panels[0] = new ShopLayout(user.isUprawnieniaAdministratora());
         loadProducts();
-        this.panels[2] = new CartLayout();
+        if (user.isUprawnieniaAdministratora()) {
+            this.panels[2] = new WarehouseLayout();
+        } else {
+            this.panels[2] = new CartLayout();
+        }
         this.panels[3] = new UzytForm(user);
 
         this.add(this.panels[2]);

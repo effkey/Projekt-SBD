@@ -26,6 +26,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import map.Magazyn;
 import map.Produkt;
 import static sun.jvm.hotspot.HelloWorld.e;
 import view.Image;
@@ -49,6 +50,40 @@ public class Cart extends JPanel implements ChangeListener {
     private List<Produkt> list = new ArrayList<Produkt>();
 
     public Cart(Dimension dim, int cardinality) {
+//		this.setSize(new Dimension(dim.width, dim.height*10));
+        System.out.println(dim.width + "  " + dim.height);
+        this.curResolution = Toolkit.getDefaultToolkit().getScreenSize();
+        if (this.curResolution.width != this.defaultResolution.width || this.curResolution.height != this.defaultResolution.height) {
+            float tmp = this.curResolution.height / (float) (this.defaultResolution.height);
+            System.out.println(tmp);
+            this.scale = this.curResolution.width / (float) (this.defaultResolution.width);
+            if (scale > 1 && tmp > 1) {
+                if (tmp > scale) {
+                    scale = tmp;
+                }
+            } else if (scale > 1 && tmp < 1) {
+                if (scale + tmp < 0) {
+                    scale = tmp;
+                }
+            } else if (scale < 1 && tmp < 1) {
+                if (tmp < scale) {
+                    scale = tmp;
+                }
+            } else if (scale < 1 && tmp > 1) {
+                if (scale + tmp > 0) {
+                    scale = tmp;
+                }
+            }
+        }
+        scale /= 2;
+        System.out.println(scale);
+        this.imageWidth = (int) (this.imageWidth * scale);
+        this.imageHeight = (int) (this.imageHeight * scale);
+        this.setPreferredSize(new Dimension(dim.width - CartLayout.borderPx * 10, cardinality * imageHeight));
+        font = new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 40));
+    }
+    
+        public Cart(Dimension dim, int cardinality, Magazyn magazyn) {
 //		this.setSize(new Dimension(dim.width, dim.height*10));
         System.out.println(dim.width + "  " + dim.height);
         this.curResolution = Toolkit.getDefaultToolkit().getScreenSize();
