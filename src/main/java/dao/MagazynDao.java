@@ -28,7 +28,7 @@ public class MagazynDao extends DAO<Magazyn> {
         return null;
     }
 
-        public Magazyn addMagazyn(int pojemnosc, Adres adres) {
+    public Magazyn addMagazyn(int pojemnosc, Adres adres) {
         Session session = this.getSession();
         session.beginTransaction();
         Magazyn cat = new Magazyn();
@@ -40,7 +40,28 @@ public class MagazynDao extends DAO<Magazyn> {
         return null;
     }
     
-    
+    public Magazyn getMagazyn(int pojemnosc, Adres adres) {
+        System.out.println(pojemnosc + "  " + adres);
+        Session session = this.getSession();
+        session.beginTransaction();
+        Magazyn magazyn = null;
+        magazyn = (Magazyn) session.createQuery(
+                " select magazyn "
+                + "from map.Magazyn magazyn "
+                + "where magazyn.pojemnosc = :pojemnosc and magazyn.adres =:adres")
+                .setParameter("pojemnosc", pojemnosc)
+                .setParameter("adres", adres)
+                .uniqueResult();
+
+        session.getTransaction().commit();
+        if (magazyn != null) {
+            System.out.println("yep");
+            return magazyn;
+        }
+
+        return null;
+    }
+
     @Override
     public List<Magazyn> search(Magazyn criteria) {
         return null;
