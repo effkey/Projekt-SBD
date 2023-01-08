@@ -110,9 +110,9 @@ public class ShopLayout extends JPanel implements ActionListener {
     private void makeCategoryPanel() {
         if (admin) {
             this.addCategory = new JButton("<html>" + "  Dodaj" + "<br>" + "kategorię" + "</html>");
-            addCategory.setPreferredSize(new Dimension(60, 60));
+            addCategory.setPreferredSize(new Dimension(this.categoryPanel.getBounds().width, this.categoryPanel.getBounds().width/2));
             this.addCategory.setFont(new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 40)));
-            this.categoryPanel.add(addCategory, BorderLayout.NORTH);
+            this.categoryPanel.add(addCategory, BorderLayout.SOUTH);
             this.addCategory.addActionListener(this);
             // dodaj przycisk umożliwiający dodawanie kategorii
             // do tego jakiś popup
@@ -122,9 +122,9 @@ public class ShopLayout extends JPanel implements ActionListener {
             // wymyśl coś
         } else {
             this.addCategory = new JButton("<html>" + "  Zastosuj" + "<br>" + "filtry" + "</html>");
-            addCategory.setPreferredSize(new Dimension(60, 60));
+            addCategory.setPreferredSize(new Dimension(this.categoryPanel.getBounds().width, this.categoryPanel.getBounds().width/2));
             this.addCategory.setFont(new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 40)));
-            this.categoryPanel.add(addCategory, BorderLayout.NORTH);
+            this.categoryPanel.add(addCategory, BorderLayout.SOUTH);
             this.addCategory.addActionListener(this);
         }
         this.categoryPanel.setBackground(Color.black);
@@ -254,25 +254,18 @@ public class ShopLayout extends JPanel implements ActionListener {
             mf.showUserSettings();
         }
         if (e.getSource() == this.addCategory && admin) {
-
             addedCategoryPopUp();
         }
         if (e.getSource() == this.addCategory && admin == false){
-//             int index = list.getSelectedIndex();
-//            System.out.println("Index Selected: " + index);
-//            String s = (String) list.getSelectedValue();
-//            System.out.println("Value Selected: " + s);
-
 
             mainPanel.clearProductsPanel();
             int[] selectedIndices = list.getSelectedIndices();
-//            String[] myArray = new String[50];
+            ArrayList<String> categories = new ArrayList<String>();
             for (int i = 0; i < selectedIndices.length; i++) {
-//                myArray[i] = String.valueOf(jList1.getModel().getElementAt(selectedIndices[i]));
                 System.out.println(list.getModel().getElementAt(selectedIndices[i]));
-//                    if(   list.getModel().getElementAt(selectedIndices[i]))
-                mainPanel.filterProducts(list.getModel().getElementAt(selectedIndices[i]));
+                categories.add(list.getModel().getElementAt(selectedIndices[i]));
             }
+            mainPanel.setList(categories);
         }
     }
 
@@ -330,6 +323,5 @@ public class ShopLayout extends JPanel implements ActionListener {
 //            this.revalidate();
             this.list.repaint();
         }
-
     }
 }
