@@ -49,7 +49,7 @@ public class ListPanel extends JPanel implements ActionListener {
     private final List<JTextField> priceField = new ArrayList<>();
     private final List<JTextField> numOfProductsField = new ArrayList<>();
     private final List<Produkt> list = new ArrayList<Produkt>();
-    private final List<JButton> productsImages = new ArrayList<>();
+//    private final List<JButton> productsImages = new ArrayList<>();
 
     public ListPanel(Dimension dim, int cardinality, boolean admin) {
         this.admin = admin;
@@ -232,7 +232,7 @@ public class ListPanel extends JPanel implements ActionListener {
         this.toDetailsButton.add(toDetails);
         this.numOfProductsField.add(numOfProducts);
         this.priceField.add(price);
-        this.productsImages.add(productImage);
+//        this.productsImages.add(productImage);
 
         this.add(productImage);
         this.add(shortText);
@@ -274,7 +274,7 @@ public class ListPanel extends JPanel implements ActionListener {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         g2d.scale(scale, scale);
-//        this.paintProducts(g2d);
+        this.paintProducts(g2d);
         g2d.scale(1 / scale, 1 / scale);
     }
 
@@ -417,7 +417,7 @@ public class ListPanel extends JPanel implements ActionListener {
         this.toDetailsButton.add(toDetails);
         this.numOfProductsField.add(numOfProducts);
         this.priceField.add(price);
-        this.productsImages.add(productImage);
+//        this.productsImages.add(productImage);
 
         this.add(productImage);
         this.add(shortText);

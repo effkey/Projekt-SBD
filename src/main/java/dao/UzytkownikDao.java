@@ -8,8 +8,9 @@ import map.Uzytkownik;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
-public class UzytkownikDao extends DAO<Uzytkownik>{
-    public UzytkownikDao(){
+public class UzytkownikDao extends DAO<Uzytkownik> {
+
+    public UzytkownikDao() {
         this.setmodelClass(map.Uzytkownik.class);
     }
 
@@ -17,9 +18,9 @@ public class UzytkownikDao extends DAO<Uzytkownik>{
     public List<Uzytkownik> search(Uzytkownik criteria) {
         return null;
     }
-    
-    public Uzytkownik getUser(String password, String login){
-        System.out.println(password +"  "+login);
+
+    public Uzytkownik getUser(String password, String login) {
+        System.out.println(password + "  " + login);
         Session session = this.getSession();
         session.beginTransaction();
         Uzytkownik user = null;
@@ -30,16 +31,16 @@ public class UzytkownikDao extends DAO<Uzytkownik>{
                 .setParameter("login", login)
                 .setParameter("password", password)
                 .uniqueResult();
-        
+
         session.getTransaction().commit();
-        if(user!=null){
-            System.out.println(user.getImie()+"  "+user.getNazwisko());
+        if (user != null) {
+            System.out.println(user.getImie() + "  " + user.getNazwisko());
             return user;
         }
         return null;
     }
 
-    public Uzytkownik addUser(String firstname, String surname, String login,  String password, Date dataZalozeniaKonta, String email, boolean admin){
+    public Uzytkownik addUser(String firstname, String surname, String login, String password, Date dataZalozeniaKonta, String email, boolean admin) {
         Session session = this.getSession();
         session.beginTransaction();
         Uzytkownik user = new Uzytkownik();
@@ -53,7 +54,6 @@ public class UzytkownikDao extends DAO<Uzytkownik>{
         session.persist(user);
         session.getTransaction().commit();
         session.close();
-
-                return null;
-}
+        return null;
+    }
 }
