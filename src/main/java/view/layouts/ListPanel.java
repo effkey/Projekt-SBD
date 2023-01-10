@@ -81,7 +81,7 @@ public class ListPanel extends JPanel implements ActionListener {
         this.imageWidth = (int) (this.imageWidth * scale);
         this.imageHeight = (int) (this.imageHeight * scale);
         this.setPreferredSize(new Dimension(dim.width - ShopLayout.borderPx * 10, cardinality / 2 * imageHeight));
-        font = new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 40));
+        font = new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 36));
         if (this.admin) {
             JButton add_product = new JButton("Dodaj nowy produkt");
             add_product.setBounds((int) (imageWidth / 4),

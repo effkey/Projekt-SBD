@@ -30,6 +30,7 @@ import map.Magazyn;
 import map.Produkt;
 import view.Image;
 import view.MainFrame;
+import static view.layouts.CartLayout.borderPx;
 import static view.layouts.ListPanel.scale;
 
 public class WarehouseLayout extends JPanel implements ActionListener {
@@ -106,7 +107,7 @@ public class WarehouseLayout extends JPanel implements ActionListener {
     }
 
     public void refreshCategoryPanel() {
-        float sumFloat = 0;
+      float sumFloat = 0;
         int numOf = 0;
         float massFloat = 0;
         ArrayList<Produkt> products = (ArrayList<Produkt>) this.mainPanel.getProducts();
@@ -119,8 +120,17 @@ public class WarehouseLayout extends JPanel implements ActionListener {
             i++;
         }
         quantity.setText(String.valueOf(numOf));
-        sum.setText(String.valueOf(sumFloat));
-        mass.setText(String.valueOf(massFloat));
+        if (sumFloat * 100 % 10 == 0) {
+            sum.setText(String.valueOf(Math.round(sumFloat*100)/100.0) + "0zł");
+        } else {
+            sum.setText(String.valueOf(Math.round(sumFloat * 100) / 100.0) + "zł");
+        }
+
+        if (massFloat * 100 % 10 == 0) {
+            mass.setText(String.valueOf(Math.round(massFloat*100)/100.0)+"0kg");
+        }else {
+            mass.setText(String.valueOf(Math.round(massFloat * 100) / 100.0) + "kg");
+        }
     }
 
     public void makeCategoryPanel() {
@@ -129,15 +139,21 @@ public class WarehouseLayout extends JPanel implements ActionListener {
         addMagazin.setPreferredSize(new Dimension(categoryPanel.getSize().width, (int) (3 * 40 * scale)));
         addMagazin.addActionListener(this);
         addMagazin.setFont(new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 40)));
+        this.categoryPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         sum = new JLabel();
         sum.setFont(font);
         sum.setForeground(Color.white);
+        sum.setPreferredSize(new Dimension(this.categoryPanel.getSize().width-2*borderPx, this.categoryPanel.getSize().width/3));
+        
         quantity = new JLabel();
         quantity.setFont(font);
         quantity.setForeground(Color.white);
+        quantity.setPreferredSize(new Dimension(this.categoryPanel.getSize().width-2*borderPx, this.categoryPanel.getSize().width/3));
+        
         mass = new JLabel();
         mass.setFont(font);
         mass.setForeground(Color.white);
+        mass.setPreferredSize(new Dimension(this.categoryPanel.getSize().width-2*borderPx, this.categoryPanel.getSize().width/3));
 
         JLabel tmp1 = new JLabel("Wartość:");
         tmp1.setFont(font);
@@ -151,16 +167,13 @@ public class WarehouseLayout extends JPanel implements ActionListener {
         tmp3.setFont(font);
         tmp3.setForeground(Color.white);
 
-        this.categoryPanel.add(addMagazin);
         this.categoryPanel.add(tmp1);
         this.categoryPanel.add(sum);
-        this.categoryPanel.add(new JLabel());
         this.categoryPanel.add(tmp2);
         this.categoryPanel.add(quantity);
-        this.categoryPanel.add(new JLabel());
         this.categoryPanel.add(tmp3);
         this.categoryPanel.add(mass);
-        this.categoryPanel.add(new JLabel());
+        this.categoryPanel.setBackground(Color.black);
 
         MagazynDao dao = new MagazynDao();
         List<Magazyn> magazyny = dao.getAll();
