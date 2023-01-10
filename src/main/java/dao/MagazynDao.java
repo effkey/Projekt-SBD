@@ -29,13 +29,10 @@ public class MagazynDao extends DAO<Magazyn> {
         return null;
     }
 
-    public Magazyn addMagazyn(int pojemnosc, Adres adres) {
+    public Magazyn addMagazyn(Magazyn magazyn) {
         Session session = this.getSession();
         session.beginTransaction();
-        Magazyn cat = new Magazyn();
-        cat.setPojemnosc(pojemnosc);
-        cat.setAdres(adres);
-        session.persist(cat);
+        session.persist(magazyn);
         session.getTransaction().commit();
         session.close();
         return null;
