@@ -145,7 +145,6 @@ public class Details extends JPanel implements ActionListener {
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(5,5,5,5);
         if (isAdmin) {
-
             MagazynDao dao = new MagazynDao();
             List<Magazyn> magazyny = dao.getAll();
             DefaultListModel<String> model = new DefaultListModel<>();
@@ -154,16 +153,12 @@ public class Details extends JPanel implements ActionListener {
             list.setBackground(Color.black);
             for (Magazyn magazyn : magazyny) {
                 model.addElement("Magazyn" + String.valueOf(magazyn.getIdMagazynu()));
-//                System.out.println(kategoria.getNazwaKategorii());
             }
             list.setFont(new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 40)));
-//            list.setVisibleRowCount(6);
-            
             JPanel magazins = new JPanel();
             magazins.setBackground(Color.black);
             magazins.add(list);
            
-//            scrollPane.setPreferredSize(new Dimension(imageWidth, imageHeight));
             c.fill = GridBagConstraints.BOTH;
             c.weighty = 1;
             c.weightx = 0.4;
@@ -237,7 +232,7 @@ public class Details extends JPanel implements ActionListener {
         }
         producent.setFont(font);
         producent.setSelectedItem(produkt.getProducent());
-        producent.setEditable(isAdmin);
+        producent.setEnabled(isAdmin);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weighty = 0.25;
         c.weightx = 0.3;
@@ -267,7 +262,7 @@ public class Details extends JPanel implements ActionListener {
         }
         category.setSelectedItem(produkt.getKategoria());
         category.setFont(font);
-        category.setEditable(admin);
+        category.setEnabled(admin);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weighty = 0.25;
         c.weightx = 0.3;
@@ -343,7 +338,6 @@ public class Details extends JPanel implements ActionListener {
             imageText.setPreferredSize(ListPanel.getImageDimension());
             imageText.setText(produkt.getNazwaObrazka());
             imageText.setFont(font);
-//            imageText.setHorizontalAlignment(SwingConstants.CENTER);
             imagePanel.add(imageText);
             save.addActionListener(new ActionListener() {
                 @Override
@@ -352,7 +346,6 @@ public class Details extends JPanel implements ActionListener {
                         Kategoria kategoria = (Kategoria) category.getSelectedItem();
                         Producent prod = (Producent) producent.getSelectedItem();
                         ProduktDao dao = new ProduktDao();
-
                         produkt.setCena(Float.parseFloat(price.getText()));
                         produkt.setKategoria(kategoria);
                         produkt.setNazwaObrazka(imageText.getText());

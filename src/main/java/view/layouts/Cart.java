@@ -28,7 +28,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import map.Magazyn;
 import map.Produkt;
-import static sun.jvm.hotspot.HelloWorld.e;
 import view.Image;
 import view.MainFrame;
 
@@ -82,8 +81,8 @@ public class Cart extends JPanel implements ChangeListener {
         this.setPreferredSize(new Dimension(dim.width - CartLayout.borderPx * 10, cardinality * imageHeight));
         font = new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 40));
     }
-    
-        public Cart(Dimension dim, int cardinality, Magazyn magazyn) {
+
+    public Cart(Dimension dim, int cardinality, Magazyn magazyn) {
 //		this.setSize(new Dimension(dim.width, dim.height*10));
         System.out.println(dim.width + "  " + dim.height);
         this.curResolution = Toolkit.getDefaultToolkit().getScreenSize();
@@ -139,7 +138,7 @@ public class Cart extends JPanel implements ChangeListener {
         spinner = new JSpinner(model);
         spinner.addChangeListener(this);
         spinner.setFont(font);
-        removeButton = new JButton(Image.REMOVE.icon);
+        removeButton = new JButton(Image.RETURN.icon);
         toDetails = new JButton(Image.DETAILS.icon);
         shortText = new JTextArea(produkt.getNazwaProduktu());
 
@@ -155,55 +154,55 @@ public class Cart extends JPanel implements ChangeListener {
                 shortText.setBounds(imageWidth + 2 * ShopLayout.borderPx,
                         (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx,
                         imageWidth * 2,
-                        imageHeight / 3);
+                        imageHeight / 2);
                 toDetails.setBounds(imageWidth + 2 * ShopLayout.borderPx,
-                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 3,
+                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 2,
                         2 * imageWidth / 3,
-                        2 * imageHeight / 3);
+                        imageHeight / 2);
                 removeButton.setBounds(imageWidth + 2 * ShopLayout.borderPx + 2 * imageWidth / 3,
-                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 3,
+                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 2,
                         2 * imageWidth / 3,
-                        2 * imageHeight / 3);
+                        imageHeight / 2);
                 spinner.setBounds(imageWidth + 2 * ShopLayout.borderPx + 4 * imageWidth / 3,
-                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 3,
+                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 2,
                         2 * imageWidth / 3,
-                        2 * imageHeight / 3);
+                        imageHeight / 2);
                 break;
             case 1:
                 shortText.setBounds(imageWidth + 2 * ShopLayout.borderPx + 4 * imageWidth,
                         (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx,
                         imageWidth * 2,
-                        imageHeight / 3);
+                        imageHeight / 2);
                 toDetails.setBounds(imageWidth + 2 * ShopLayout.borderPx + 4 * imageWidth,
-                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 3,
+                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 2,
                         2 * imageWidth / 3,
-                        2 * imageHeight / 3);
+                        imageHeight / 2);
                 removeButton.setBounds(imageWidth + 2 * ShopLayout.borderPx + 2 * imageWidth / 3 + 4 * imageWidth,
-                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 3,
+                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 2,
                         2 * imageWidth / 3,
-                        2 * imageHeight / 3);
+                        imageHeight / 2);
                 spinner.setBounds(imageWidth + 2 * ShopLayout.borderPx + 4 * imageWidth / 3 + 4 * imageWidth,
-                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 3,
+                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 2,
                         2 * imageWidth / 3,
-                        2 * imageHeight / 3);
+                        imageHeight / 2);
                 break;
             default:
                 shortText.setBounds(imageWidth + 2 * ShopLayout.borderPx + 8 * imageWidth,
                         (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx,
                         imageWidth * 2,
-                        imageHeight / 3);
+                        imageHeight / 2);
                 toDetails.setBounds(imageWidth + 2 * ShopLayout.borderPx + 8 * imageWidth,
-                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 3,
+                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 2,
                         2 * imageWidth / 3,
-                        2 * imageHeight / 3);
+                        imageHeight / 2);
                 removeButton.setBounds(imageWidth + 2 * ShopLayout.borderPx + 2 * imageWidth / 3 + 8 * imageWidth,
-                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 3,
+                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 2,
                         2 * imageWidth / 3,
-                        2 * imageHeight / 3);
+                        imageHeight / 2);
                 spinner.setBounds(imageWidth + 2 * ShopLayout.borderPx + 4 * imageWidth / 3 + 8 * imageWidth,
-                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 3,
+                        (tmp / 3) * 4 * imageHeight / 3 + ShopLayout.borderPx + imageHeight / 2,
                         2 * imageWidth / 3,
-                        2 * imageHeight / 3);
+                        imageHeight / 2);
                 break;
         }
 
