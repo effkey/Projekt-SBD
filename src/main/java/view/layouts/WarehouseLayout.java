@@ -1,7 +1,6 @@
 package view.layouts;
 
 import dao.AdresDao;
-import dao.KategoriaDao;
 import dao.MagazynDao;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -14,8 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -23,12 +20,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeListener;
 import javax.swing.text.View;
 import map.Adres;
 import map.Magazyn;
@@ -85,7 +80,7 @@ public class WarehouseLayout extends JPanel implements ActionListener {
         this.makeMainPanel();
 
         this.upPanel.setLayout(null);
-        this.categoryPanel.setLayout(new FlowLayout(View.Y_AXIS));
+        this.categoryPanel.setLayout(new FlowLayout(View.VERTICAL));
 
         this.scroll = new JScrollPane(mainPanel);
 //		this.scroll.add(mainPanel);
@@ -129,11 +124,9 @@ public class WarehouseLayout extends JPanel implements ActionListener {
     }
 
     public void makeCategoryPanel() {
-        
         this.categoryPanel.setBackground(Color.black);
-        
         addMagazin = new JButton("<html>" + "  Dodaj" + "<br>" + "magazyn" + "</html>");
-        addMagazin.setPreferredSize(new Dimension(120, 60));
+        addMagazin.setPreferredSize(new Dimension(categoryPanel.getSize().width, (int) (3 * 40 * scale)));
         addMagazin.addActionListener(this);
         addMagazin.setFont(new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 40)));
         sum = new JLabel();
@@ -158,15 +151,15 @@ public class WarehouseLayout extends JPanel implements ActionListener {
         tmp3.setFont(font);
         tmp3.setForeground(Color.white);
 
-        this.categoryPanel.add(addMagazin, BorderLayout.NORTH);
-        this.categoryPanel.add(tmp1, BorderLayout.NORTH);
-        this.categoryPanel.add(sum, BorderLayout.NORTH);
+        this.categoryPanel.add(addMagazin);
+        this.categoryPanel.add(tmp1);
+        this.categoryPanel.add(sum);
         this.categoryPanel.add(new JLabel());
-        this.categoryPanel.add(tmp2, BorderLayout.NORTH);
-        this.categoryPanel.add(quantity, BorderLayout.NORTH);
+        this.categoryPanel.add(tmp2);
+        this.categoryPanel.add(quantity);
         this.categoryPanel.add(new JLabel());
-        this.categoryPanel.add(tmp3, BorderLayout.NORTH);
-        this.categoryPanel.add(mass, BorderLayout.NORTH);
+        this.categoryPanel.add(tmp3);
+        this.categoryPanel.add(mass);
         this.categoryPanel.add(new JLabel());
 
         MagazynDao dao = new MagazynDao();
@@ -184,16 +177,15 @@ public class WarehouseLayout extends JPanel implements ActionListener {
                         b.setEnabled(true);
                     }
                     temp.setEnabled(false);
-                    idxWarehouse = Integer.parseInt(temp.getText().substring(3))-1;
+                    idxWarehouse = Integer.parseInt(temp.getText().substring(3)) - 1;
+                    System.out.println("XDXDXD    " + idxWarehouse + "     XDDDDD");
                     this.refreshUpPanel();
                 }
             });
-//            temp.setPreferredSize(new Dimension(categoryPanel.getSize().width, (int)(2*40*scale)));
+            temp.setPreferredSize(new Dimension(categoryPanel.getSize().width, (int) (2 * 40 * scale)));
             temp.setFont(font);
             this.categoryPanel.add(temp, BorderLayout.CENTER);
         }
-        this.warehousesBut.get(this.idxWarehouse).setEnabled(false);
-//        this.refreshUpPanel();
         this.refreshCategoryPanel();
     }
 
@@ -219,7 +211,7 @@ public class WarehouseLayout extends JPanel implements ActionListener {
         JPanel address = new JPanel(new GridLayout(2, 5));
         address.setBackground(Color.BLACK);
         address.setBounds(2 * this.upPanel.getPreferredSize().height, 0,
-                this.upPanel.getPreferredSize().width - 3 * this.upPanel.getPreferredSize().height, this.upPanel.getPreferredSize().height);
+                this.upPanel.getPreferredSize().width - 4 * this.upPanel.getPreferredSize().height, this.upPanel.getPreferredSize().height);
 
         JLabel city = new JLabel("Miasto:");
         city.setFont(font);
@@ -271,7 +263,7 @@ public class WarehouseLayout extends JPanel implements ActionListener {
         address.add(streetField);
         address.add(buildNumField);
         address.add(apartNumField);
-        
+
         this.upPanel.add(address);
 
         this.upPanel.setBackground(Color.BLACK);
@@ -285,87 +277,72 @@ public class WarehouseLayout extends JPanel implements ActionListener {
             mf.returnToShopFromCart();
         }
         if (e.getSource() == this.addMagazin) {
-            addedCategoryPopUp();
+            makeAddMagazine();
         }
-    }
-    
-    private void addMagazineButton(int volume) {
-          JButton temp = new JButton("new button");
-            this.warehousesBut.add(temp);
-            Magazyn magazyn = new Magazyn(volume,new Adres("brak", 0, "brak", "brak", 0));
-            this.warehouses.add(magazyn);
-             temp.setBackground(Color.BLACK);
-            temp.setForeground(Color.WHITE);
-            temp.addActionListener((ActionEvent e) -> {
-                if (e.getSource() == temp) {
-                    for (JButton b : this.warehousesBut) {
-                        b.setEnabled(true);
-                    }
-                    temp.setEnabled(false);
-                    idxWarehouse = Integer.parseInt(temp.getText().substring(3))-1;
-                    this.refreshUpPanel();
-                }
-            });
-            temp.setFont(font);
-            this.categoryPanel.add(temp, BorderLayout.CENTER);
-        
     }
 
     private void refreshUpPanel() {
         cityField.setText(this.warehouses.get(this.idxWarehouse).getAdres().getMiasto());
+        System.out.println(this.warehouses.get(this.idxWarehouse).getAdres().getMiasto());
         zipCodeField.setText(String.valueOf(this.warehouses.get(this.idxWarehouse).getAdres().getKodPocztowy()));
         streetField.setText(this.warehouses.get(this.idxWarehouse).getAdres().getUlica());
         buildNumField.setText(this.warehouses.get(this.idxWarehouse).getAdres().getNrBudynku());
         if (this.warehouses.get(this.idxWarehouse).getAdres().getNrLokalu() != null) {
             apartNumField.setText(String.valueOf(this.warehouses.get(this.idxWarehouse).getAdres().getNrLokalu()));
-        }else{
+        } else {
             apartNumField.setText("");
         }
     }
-    
-        private void addedCategoryPopUp() {
+
+    private void makeAddMagazine() {
+        JTextField cityField= new JTextField();
+        JTextField zipCodeField= new JTextField();
+        JTextField streetField= new JTextField();
+        JTextField buildNumField= new JTextField();
+        JTextField apartNumField= new JTextField();
+        JSpinner volumeSpinner = new JSpinner();
         
         JPanel address = new JPanel(new GridLayout(2, 6));
         JLabel city = new JLabel("Miasto:");
         city.setFont(font);
-        city.setForeground(Color.WHITE);
+        city.setForeground(Color.BLACK);
         cityField = new JTextField();
         cityField.setFont(font);
-        cityField.setText(this.warehouses.get(this.idxWarehouse).getAdres().getMiasto());
+        cityField.setText("");
 
         JLabel zipCode = new JLabel("Kod pocztowy:");
         zipCode.setFont(font);
-        zipCode.setForeground(Color.WHITE);
+        zipCode.setForeground(Color.BLACK);
         zipCodeField = new JTextField();
         zipCodeField.setFont(font);
-        zipCodeField.setText(String.valueOf(this.warehouses.get(this.idxWarehouse).getAdres().getKodPocztowy()));
+        zipCodeField.setText("");
 
         JLabel street = new JLabel("Ulica:");
         street.setFont(font);
-        street.setForeground(Color.WHITE);
+        street.setForeground(Color.BLACK);
         streetField = new JTextField();
         streetField.setFont(font);
-        streetField.setText(this.warehouses.get(this.idxWarehouse).getAdres().getUlica());
+        streetField.setText("");
 
         JLabel buildNum = new JLabel("Nr budynku:");
         buildNum.setFont(font);
-        buildNum.setForeground(Color.WHITE);
+        buildNum.setForeground(Color.BLACK);
         buildNumField = new JTextField();
         buildNumField.setFont(font);
-        buildNumField.setText(this.warehouses.get(this.idxWarehouse).getAdres().getNrBudynku());
+        buildNumField.setText("");
 
         JLabel apartNum = new JLabel("Nr lokalu:");
         apartNum.setFont(font);
-        apartNum.setForeground(Color.WHITE);
+        apartNum.setForeground(Color.BLACK);
         address.add(apartNum);
         apartNumField = new JTextField();
         apartNumField.setFont(font);
-        
+        apartNumField.setText("");
+
         JLabel volume = new JLabel("Pojemność");
         volume.setFont(font);
-        volume.setForeground(Color.WHITE);
-       
-        
+        volume.setForeground(Color.BLACK);
+
         SpinnerModel model = new SpinnerNumberModel(1, 1, 1000000, 1);
         volumeSpinner = new JSpinner(model);
         volumeSpinner.setFont(font);
@@ -375,11 +352,7 @@ public class WarehouseLayout extends JPanel implements ActionListener {
         address.add(street);
         address.add(buildNum);
         address.add(apartNum);
-         address.add(volume);
-
-        if (this.warehouses.get(this.idxWarehouse).getAdres().getNrLokalu() != null) {
-            apartNumField.setText(String.valueOf(this.warehouses.get(this.idxWarehouse).getAdres().getNrLokalu()));
-        }
+        address.add(volume);
 
         address.add(cityField);
         address.add(zipCodeField);
@@ -387,49 +360,87 @@ public class WarehouseLayout extends JPanel implements ActionListener {
         address.add(buildNumField);
         address.add(apartNumField);
         address.add(volumeSpinner);
-//        address.setLocation(ShopLayout.borderPx, this.upPanel.getPreferredSize().height - ShopLayout.borderPx);
-        this.upPanel.add(address);
-         int result = JOptionPane.showConfirmDialog(null, address,
+
+        addMagazinePopUp(address, cityField, zipCodeField, streetField, buildNumField, apartNumField, volumeSpinner);
+        this.refreshUpPanel();
+    }
+
+    private void addMagazinePopUp(JPanel address, JTextField cityField,
+        JTextField zipCodeField,
+        JTextField streetField,
+        JTextField buildNumField,
+        JTextField apartNumField,
+        JSpinner volumeSpinner) {
+        int result = JOptionPane.showConfirmDialog(null, address,
                 "Dodaj magazyn", JOptionPane.OK_CANCEL_OPTION);
+
         if (result == JOptionPane.OK_OPTION) {
-
-
-            MagazynDao dao = new MagazynDao();
-            AdresDao adresDao = new AdresDao();
-            Adres adres = adresDao.getAdres(cityField.getText(),Integer.valueOf(zipCodeField.getText()), streetField.getText(),
-                        buildNumField.getText(), Integer.valueOf(apartNumField.getText()));
-            if (adres == null) {
-                adresDao.addAdres(cityField.getText(),Integer.valueOf(zipCodeField.getText()), streetField.getText(),
-                        buildNumField.getText(), Integer.valueOf(apartNumField.getText()));
-                adres = adresDao.getAdres(cityField.getText(),Integer.valueOf(zipCodeField.getText()), streetField.getText(),
-                        buildNumField.getText(), Integer.valueOf(apartNumField.getText()));
-                
-                
-            }
-           
-            dao.addMagazyn((Integer)volumeSpinner.getValue(),adres);
-            Magazyn maagazyn = dao.getMagazyn((Integer)volumeSpinner.getValue(), adres);
-            
-            
-               JButton temp = new JButton(maagazyn.toString());
-            this.warehousesBut.add(temp);
-            this.warehouses.add(maagazyn);
-            temp.setBackground(Color.BLACK);
-            temp.setForeground(Color.WHITE);
-            temp.addActionListener((ActionEvent e) -> {
-                if (e.getSource() == temp) {
-                    for (JButton b : this.warehousesBut) {
-                        b.setEnabled(true);
+            if ("".equals(cityField.getText())) {
+                this.emptyFieldPopUp("miasto");
+                addMagazinePopUp(address, cityField, zipCodeField, streetField, buildNumField, apartNumField, volumeSpinner);
+            } else if ("".equals(zipCodeField)) {
+                this.emptyFieldPopUp("kod pocztowy");
+                addMagazinePopUp(address, cityField, zipCodeField, streetField, buildNumField, apartNumField, volumeSpinner);
+            } else if ("".equals(streetField)) {
+                this.emptyFieldPopUp("ulica");
+                addMagazinePopUp(address, cityField, zipCodeField, streetField, buildNumField, apartNumField, volumeSpinner);
+            } else if ("".equals(buildNumField)) {
+                this.emptyFieldPopUp("nr budynku");
+                addMagazinePopUp(address, cityField, zipCodeField, streetField, buildNumField, apartNumField, volumeSpinner);
+            } else if ("".equals(volumeSpinner)) {
+                this.emptyFieldPopUp("pojemność");
+                addMagazinePopUp(address, cityField, zipCodeField, streetField, buildNumField, apartNumField, volumeSpinner);
+            } else {
+                try {
+                    MagazynDao dao = new MagazynDao();
+                    AdresDao adresDao = new AdresDao();
+                    Adres adres;
+                    if (apartNumField.getText().equals("")) {
+                        adres = new Adres(cityField.getText(), Integer.parseInt(zipCodeField.getText()), streetField.getText(),
+                                buildNumField.getText());
+                    } else {
+                        adres = new Adres(cityField.getText(), Integer.parseInt(zipCodeField.getText()), streetField.getText(),
+                                buildNumField.getText(), Integer.parseInt(apartNumField.getText()));
                     }
-                    temp.setEnabled(false);
-                    idxWarehouse = Integer.parseInt(temp.getText().substring(3))-1;
-                    this.refreshUpPanel();
+                    adresDao.addAdres(adres);
+                    Magazyn mag = new Magazyn((Integer) volumeSpinner.getValue(), adres);
+                    dao.addMagazyn(mag);
+                    
+                    mag = dao.getMagazyn((Integer) volumeSpinner.getValue(), adres);
+
+                    JButton temp = new JButton(mag.toString());
+                    this.warehousesBut.add(temp);
+                    this.warehouses.add(mag);
+                    temp.setBackground(Color.BLACK);
+                    temp.setForeground(Color.WHITE);
+                    temp.addActionListener((ActionEvent e) -> {
+                        if (e.getSource() == temp) {
+                            for (JButton b : this.warehousesBut) {
+                                b.setEnabled(true);
+                            }
+                            temp.setEnabled(false);
+                            idxWarehouse = Integer.parseInt(temp.getText().substring(3)) - 1;
+                            this.refreshUpPanel();
+                        }
+                    });
+                    temp.setPreferredSize(new Dimension(categoryPanel.getSize().width, (int) (2 * 40 * scale)));
+                    temp.setFont(font);
+                    this.categoryPanel.add(temp, BorderLayout.CENTER);
+                    this.categoryPanel.validate();
+                } catch (NumberFormatException e) {
+                    System.out.println("Wprowadzono niewłasciwe dane!");
+                    this.wrongDataPopUp();
+                    addMagazinePopUp(address, cityField, zipCodeField, streetField, buildNumField, apartNumField, volumeSpinner);
                 }
-            });
-//            temp.setPreferredSize(new Dimension(categoryPanel.getSize().width, (int)(2*40*scale)));
-            temp.setFont(font);
-            this.categoryPanel.add(temp, BorderLayout.CENTER);
-            this.categoryPanel.validate();
+            }
         }
+    }
+
+    private void emptyFieldPopUp(String data) {
+        JOptionPane.showMessageDialog(null, "Pole " + data + " jest puste!", "", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void wrongDataPopUp() {
+        JOptionPane.showMessageDialog(null, "Wprowadzono nieprawidłowy typ danych!", "", JOptionPane.ERROR_MESSAGE);
     }
 }
