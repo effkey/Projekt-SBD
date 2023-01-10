@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -49,10 +50,24 @@ public class Produkt {
     @JoinColumn(name = "Producent_idProducent")
     private Producent producent;
 
-    @ManyToMany(mappedBy = "produkt")
-    private List<Zamowienie> zamowienie = new ArrayList<Zamowienie>(); 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "sztukiproduktu",
+            joinColumns = {
+                @JoinColumn(name = "Produkt_idProdukt")},
+            inverseJoinColumns = {
+                @JoinColumn(name = "Zamowienie_idZamowienie")}
+    )
+    private List<Zamowienie> zamowienie = new ArrayList<Zamowienie>();
 
-    @ManyToMany(mappedBy = "produkt")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "produktmagazyn",
+            joinColumns = {
+                @JoinColumn(name = "Produkt_idProdukt")},
+            inverseJoinColumns = {
+                @JoinColumn(name = "Magazyn_idMagazynu")}
+    )
     private List<Magazyn> magazyn = new ArrayList<Magazyn>();
 
     public Produkt() {
