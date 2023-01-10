@@ -132,7 +132,7 @@ public class ShopLayout extends JPanel implements ActionListener {
         list.setSelectionBackground(Color.gray);
         list.setFont(new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 30)));
         for (Kategoria kategoria : kategorie) {
-            model.addElement("<html>" + kategoria.getNazwaKategorii() + "</html>");
+            model.addElement(kategoria.getNazwaKategorii());
         }
         this.categoryPanel.add(list, BorderLayout.CENTER);
         this.list.setSelectionBackground(new Color(188, 69, 69));
