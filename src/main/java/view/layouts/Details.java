@@ -1,4 +1,3 @@
-
 package view.layouts;
 
 import dao.KategoriaDao;
@@ -56,7 +55,7 @@ public class Details extends JPanel implements ActionListener {
     private boolean fromCart;
     private Produkt produkt;
     private JList<String> list;
-    private JScrollPane  scrollPane;
+    private JScrollPane scrollPane;
 
     private Font font = new Font("Sans Serif", Font.BOLD, (int) (scale * 40));
 
@@ -143,7 +142,7 @@ public class Details extends JPanel implements ActionListener {
         textPanel.add(textInputsPanel);
 
         GridBagConstraints c = new GridBagConstraints();
-        c.insets = new Insets(5,5,5,5);
+        c.insets = new Insets(5, 5, 5, 5);
         if (isAdmin) {
             MagazynDao dao = new MagazynDao();
             List<Magazyn> magazyny = dao.getAll();
@@ -158,7 +157,7 @@ public class Details extends JPanel implements ActionListener {
             JPanel magazins = new JPanel();
             magazins.setBackground(Color.black);
             magazins.add(list);
-           
+
             c.fill = GridBagConstraints.BOTH;
             c.weighty = 1;
             c.weightx = 0.4;
@@ -166,7 +165,7 @@ public class Details extends JPanel implements ActionListener {
             c.gridwidth = 1;
             c.gridx = 3;
             c.gridy = 0;
-            textInputsPanel.add(magazins,c);
+            textInputsPanel.add(magazins, c);
         } else {
             addToCartButton = new JButton(view.Image.CART_ADD.icon);
             addToCartButton.addActionListener(this);
@@ -191,10 +190,10 @@ public class Details extends JPanel implements ActionListener {
         c.weighty = 0.25;
         c.weightx = 0.3;
         c.gridheight = 1;
-        c.gridwidth = 1;          
+        c.gridwidth = 1;
         c.gridx = 1;
         c.gridy = 0;
-        textInputsPanel.add(priceLabel,c);
+        textInputsPanel.add(priceLabel, c);
 
         String pr = String.valueOf(produkt.getCena());
         if (produkt.getCena() * 100 % 10 == 0) {
@@ -207,10 +206,10 @@ public class Details extends JPanel implements ActionListener {
         c.weighty = 0.25;
         c.weightx = 0.3;
         c.gridheight = 1;
-        c.gridwidth = 1;  
+        c.gridwidth = 1;
         c.gridx = 2;
         c.gridy = 0;
-        textInputsPanel.add(price,c);
+        textInputsPanel.add(price, c);
 
         JLabel producentLabel = new JLabel("Producent: ");
         producentLabel.setFont(font);
@@ -219,28 +218,29 @@ public class Details extends JPanel implements ActionListener {
         c.weighty = 0.25;
         c.weightx = 0.3;
         c.gridheight = 1;
-        c.gridwidth = 1;  
+        c.gridwidth = 1;
         c.gridx = 1;
         c.gridy = 1;
-        textInputsPanel.add(producentLabel,c);
+        textInputsPanel.add(producentLabel, c);
 
         ProducentDao pDao = new ProducentDao();
         ArrayList<Producent> prod = (ArrayList<Producent>) pDao.getAll();
         JComboBox producent = new JComboBox();
         for (Producent p : prod) {
-            producent.addItem(p);
+            producent.addItem(p.toString());
         }
         producent.setFont(font);
-        producent.setSelectedItem(produkt.getProducent());
+        producent.setSelectedItem(produkt.getProducent().toString());
+        System.out.println(produkt.getProducent() + " XDDDDDDDDDDD" + producent.getSelectedItem());
         producent.setEnabled(isAdmin);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weighty = 0.25;
         c.weightx = 0.3;
         c.gridheight = 1;
-        c.gridwidth = 1;  
+        c.gridwidth = 1;
         c.gridx = 2;
         c.gridy = 1;
-        textInputsPanel.add(producent,c);
+        textInputsPanel.add(producent, c);
 
         JLabel categoryLabel = new JLabel("Kategoria: ");
         categoryLabel.setFont(font);
@@ -249,28 +249,28 @@ public class Details extends JPanel implements ActionListener {
         c.weighty = 0.25;
         c.weightx = 0.3;
         c.gridheight = 1;
-        c.gridwidth = 1;  
+        c.gridwidth = 1;
         c.gridx = 1;
         c.gridy = 2;
-        textInputsPanel.add(categoryLabel,c);
+        textInputsPanel.add(categoryLabel, c);
 
         KategoriaDao kDao = new KategoriaDao();
         ArrayList<Kategoria> kat = (ArrayList<Kategoria>) kDao.getAll();
         JComboBox category = new JComboBox();
         for (Kategoria k : kat) {
-            category.addItem(k);
+            category.addItem(k.toString());
         }
-        category.setSelectedItem(produkt.getKategoria());
+        category.setSelectedItem(produkt.getKategoria().toString());
         category.setFont(font);
         category.setEnabled(admin);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weighty = 0.25;
         c.weightx = 0.3;
         c.gridheight = 1;
-        c.gridwidth = 1;  
+        c.gridwidth = 1;
         c.gridx = 2;
         c.gridy = 2;
-        textInputsPanel.add(category,c);
+        textInputsPanel.add(category, c);
 
         JLabel MassLabel = new JLabel("Masa: ");
         MassLabel.setFont(font);
@@ -279,10 +279,10 @@ public class Details extends JPanel implements ActionListener {
         c.weighty = 0.25;
         c.weightx = 0.3;
         c.gridheight = 1;
-        c.gridwidth = 1;  
+        c.gridwidth = 1;
         c.gridx = 1;
         c.gridy = 3;
-        textInputsPanel.add(MassLabel,c);
+        textInputsPanel.add(MassLabel, c);
 
         JTextField mass = new JTextField(String.valueOf(produkt.getMasa()));
         mass.setFont(font);
@@ -291,10 +291,10 @@ public class Details extends JPanel implements ActionListener {
         c.weighty = 0.25;
         c.weightx = 0.3;
         c.gridheight = 1;
-        c.gridwidth = 1;  
+        c.gridwidth = 1;
         c.gridx = 2;
         c.gridy = 3;
-        textInputsPanel.add(mass,c);
+        textInputsPanel.add(mass, c);
 
         JPanel descPanel = new JPanel();
         descPanel.setForeground(Color.WHITE);
@@ -343,9 +343,23 @@ public class Details extends JPanel implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (e.getSource() == save) {
-                        Kategoria kategoria = (Kategoria) category.getSelectedItem();
-                        Producent prod = (Producent) producent.getSelectedItem();
+                        Kategoria kategoria = produkt.getKategoria();
+                        Producent prod = produkt.getProducent();
+                        for (Kategoria k : kDao.getAll()) {
+                            if (k.getNazwaKategorii().equals(category.getSelectedItem())) {
+                                kategoria = k;
+                                break;
+                            }
+                        }
+                        for (Producent p : pDao.getAll()) {
+                            if (p.getNazwaProducenta().equals(category.getSelectedItem())) {
+                                prod = p;
+                                break;
+                            }
+                        }
+
                         ProduktDao dao = new ProduktDao();
+                        
                         produkt.setCena(Float.parseFloat(price.getText()));
                         produkt.setKategoria(kategoria);
                         produkt.setNazwaObrazka(imageText.getText());
@@ -353,6 +367,8 @@ public class Details extends JPanel implements ActionListener {
                         produkt.setOpis(descTextArea.getText());
                         produkt.setProducent(prod);
                         produkt.setMasa(Float.parseFloat(mass.getText()));
+                        produkt.setMagazyn(null);
+                        produkt.setZamowienie(null);
                         dao.update(produkt);
                         MainFrame mf = (MainFrame) (JFrame) SwingUtilities.getWindowAncestor(returnButton);
                         mf.refreshShop(produkt);
