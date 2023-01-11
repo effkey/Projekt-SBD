@@ -231,7 +231,6 @@ public class Details extends JPanel implements ActionListener {
         }
         producent.setFont(font);
         producent.setSelectedItem(produkt.getProducent().toString());
-        System.out.println(produkt.getProducent() + " XDDDDDDDDDDD" + producent.getSelectedItem());
         producent.setEnabled(isAdmin);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weighty = 0.25;
@@ -352,14 +351,13 @@ public class Details extends JPanel implements ActionListener {
                             }
                         }
                         for (Producent p : pDao.getAll()) {
-                            if (p.getNazwaProducenta().equals(category.getSelectedItem())) {
+                            if (p.getNazwaProducenta().equals(producent.getSelectedItem())) {
                                 prod = p;
                                 break;
                             }
                         }
 
                         ProduktDao dao = new ProduktDao();
-                        
                         produkt.setCena(Float.parseFloat(price.getText()));
                         produkt.setKategoria(kategoria);
                         produkt.setNazwaObrazka(imageText.getText());
