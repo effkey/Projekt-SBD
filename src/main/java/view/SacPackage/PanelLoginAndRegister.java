@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import map.Uzytkownik;
@@ -96,12 +97,62 @@ public class PanelLoginAndRegister extends JPanel {
                 String login = txtUser.getText(), pass = txtPassReg.getText(), name = txtname.getText(), surname = txtsurname.getText(), email = txtEmail.getText(), pass2 = txtPass2.getText();
                 if (!"".equals(login) && !"".equals(pass) && !"".equals(name) && !"".equals(surname) && !"".equals(email) && pass.equals(pass2)) {
                     user = dao.addUser(name, surname, login, pass, new Date(), email, false);
-
+                    
                     //user = dao.getUser(pass, login);
+                    if (!"".equals(login) && !"".equals(pass)) {
+                    user = dao.getUser(pass, login);
+                    if (user != null) {
+                        registrySuccesfull();
+                        MainFrame frame = (MainFrame) (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, (JComponent) e.getSource());  // zdobądź rodzica (czyli JFrame)
+                        frame.getContentPane().removeAll();     // by usunąć wszystko co było na ekranie logowania
+                        frame.setLayout(new BorderLayout());    // funkcjonalność starego konstruktora ShopFrame
+                        frame.loadPanels(user);
+                        frame.pack();
+                        frame.invalidate();     // funkcje do odświeżenia frame
+                        frame.validate();
+                        frame.repaint();
+                        frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);   // Fullscreen
+                    }
+                    else{
+                        txtUserLog.setText("");
+                        txtPassLog.setText("");
+                        WrongCredentials();
+                        
+                    }
+                    }
                 }
+                else{
+                    WrongCredentials();
+                }
+                
             }
         });
     }
+        private void registrySuccesfull() {
+            Object[] options = {"Super!"};
+            int n = JOptionPane.showOptionDialog(null,
+                "Gratulacje!! Zostaniesz przekierowany do sklepu",
+                "",
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+            }
+       private void WrongCredentials()
+   {        Object[] options = {"OK"};
+               int n = JOptionPane.showOptionDialog(null,
+                "Bledne dane",
+                "",
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+            System.out.println("Bledne dane");
+   
+   }
 
     private void initLogin() {
         login.setLayout(new MigLayout("wrap", "push[center]push", "push[]25[]10[]10[]25[]push"));
@@ -151,6 +202,12 @@ public class PanelLoginAndRegister extends JPanel {
                         frame.validate();
                         frame.repaint();
                         frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);   // Fullscreen
+                    }
+                    else{
+                    txtUserLog.setText("");
+                    txtPassLog.setText("");
+                    WrongCredentials();
+                        
                     }
                 }
             }
