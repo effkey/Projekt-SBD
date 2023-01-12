@@ -419,6 +419,7 @@ public class Details extends JPanel implements ActionListener {
                         }
 
                         dao.update(produkt);
+                        produktPopPup();
                         MainFrame mf = (MainFrame) (JFrame) SwingUtilities.getWindowAncestor(returnButton);
                         if (produkt.getMagazyn() != null) {
                             produkt.setLiczbaSztuk(produkt.getMagazyn().size());
@@ -449,6 +450,19 @@ public class Details extends JPanel implements ActionListener {
             mf.addProductToCart(produkt);
             this.addToCartPopUp();
         }
+
+    }
+        private void produktPopPup(){
+        
+                Object[] options = {"OK"};
+                JOptionPane.showOptionDialog(null,
+                "Produkt zosta? zaktualizowany",
+                "",
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
 
     }
 
