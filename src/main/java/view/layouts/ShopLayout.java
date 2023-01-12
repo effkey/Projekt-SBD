@@ -191,6 +191,32 @@ public class ShopLayout extends JPanel implements ActionListener {
             System.out.println(kategoria.getNazwaKategorii());
         }
     }
+        private void kategoriaPopPup(Kategoria junk){
+        if (junk != null)
+            {
+                Object[] options = {"OK"};
+                JOptionPane.showOptionDialog(null,
+                "Utworzono Kategorie",
+                "",
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+            }
+            else
+            {
+                Object[] options = {"OK"};
+                JOptionPane.showOptionDialog(null,
+                "Nie utworzono kategorii",
+                "",
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+            }
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -278,6 +304,8 @@ public class ShopLayout extends JPanel implements ActionListener {
         if (result == JOptionPane.OK_OPTION) {
             KategoriaDao dao = new KategoriaDao();
             dao.addKategoria(nameField.getText(), descField.getText());
+            Kategoria junk = dao.getKategoria(nameField.getText(), descField.getText());
+            kategoriaPopPup(junk);
             updateCategoryList();
             this.list.repaint();
         }
