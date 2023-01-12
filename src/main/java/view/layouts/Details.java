@@ -36,7 +36,10 @@ import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import map.Kategoria;
 import map.Magazyn;
 import map.Producent;
@@ -105,12 +108,15 @@ public class Details extends JPanel implements ActionListener {
         JLabel logo = new JLabel(view.Image.LOGO.icon);
         panel.add(logo);
 
-        JTextField nameLabel = new JTextField(produkt.getNazwaProduktu());
+        JTextArea nameLabel = new JTextArea(produkt.getNazwaProduktu());
         nameLabel.setFont(font);
         nameLabel.setForeground(Color.WHITE);
         nameLabel.setBackground(Color.black);
-        nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        nameLabel.setLineWrap(true);
+        nameLabel.setWrapStyleWord(true);
+//        nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
         nameLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        nameLabel.setEditable(admin);
         panel.add(nameLabel);
 
         JPanel imagePanel = new JPanel();
@@ -144,6 +150,14 @@ public class Details extends JPanel implements ActionListener {
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(5, 5, 5, 5);
         if (isAdmin) {
+            List<Magazyn> wybraneMagazyny = produkt.getMagazyn();
+            int[] indices = new int[wybraneMagazyny.size()];
+            int index = 0;
+            for (Magazyn mag : wybraneMagazyny) {
+                indices[index] = (mag.getIdMagazynu() - 1);
+                index++;
+            }
+
             MagazynDao dao = new MagazynDao();
             List<Magazyn> magazyny = dao.getAll();
             DefaultListModel<String> model = new DefaultListModel<>();
@@ -151,8 +165,12 @@ public class Details extends JPanel implements ActionListener {
             list.setForeground(Color.white);
             list.setBackground(Color.black);
             for (Magazyn magazyn : magazyny) {
-                model.addElement("Magazyn" + String.valueOf(magazyn.getIdMagazynu()));
+//                model.addElement("Magazyn" + String.valueOf(magazyn.getIdMagazynu()));
+                model.addElement(String.valueOf(magazyn.getIdMagazynu()));
             }
+
+            this.list.setSelectedIndices(indices);
+
             list.setFont(new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 40)));
             JPanel magazins = new JPanel();
             magazins.setBackground(Color.black);
@@ -161,7 +179,7 @@ public class Details extends JPanel implements ActionListener {
             c.fill = GridBagConstraints.BOTH;
             c.weighty = 1;
             c.weightx = 0.4;
-            c.gridheight = 4;
+            c.gridheight = 5;
             c.gridwidth = 1;
             c.gridx = 3;
             c.gridy = 0;
@@ -174,20 +192,11 @@ public class Details extends JPanel implements ActionListener {
             textPanel.add(addToCartButton);
         }
 
-//        JLabel pieces = new JLabel("Liczba sztuk: ");
-//        pieces.setFont(font);
-//        pieces.setForeground(Color.WHITE);
-//        textInputsPanel.add(pieces);
-//
-//        SpinnerModel model = new SpinnerNumberModel(this.produkt.getLiczbaSztuk(), 0, 10000, 1);
-//        JSpinner spinner = new JSpinner(model);
-//        spinner.setFont(font);
-//        textInputsPanel.add(spinner);
         JLabel priceLabel = new JLabel("Cena: ");
         priceLabel.setFont(font);
         priceLabel.setForeground(Color.WHITE);
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.weighty = 0.25;
+        c.weighty = 0.2;
         c.weightx = 0.3;
         c.gridheight = 1;
         c.gridwidth = 1;
@@ -203,7 +212,7 @@ public class Details extends JPanel implements ActionListener {
         price.setFont(font);
         price.setEditable(isAdmin);
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.weighty = 0.25;
+        c.weighty = 0.2;
         c.weightx = 0.3;
         c.gridheight = 1;
         c.gridwidth = 1;
@@ -215,7 +224,7 @@ public class Details extends JPanel implements ActionListener {
         producentLabel.setFont(font);
         producentLabel.setForeground(Color.WHITE);
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.weighty = 0.25;
+        c.weighty = 0.2;
         c.weightx = 0.3;
         c.gridheight = 1;
         c.gridwidth = 1;
@@ -233,7 +242,7 @@ public class Details extends JPanel implements ActionListener {
         producent.setSelectedItem(produkt.getProducent().toString());
         producent.setEnabled(isAdmin);
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.weighty = 0.25;
+        c.weighty = 0.2;
         c.weightx = 0.3;
         c.gridheight = 1;
         c.gridwidth = 1;
@@ -245,7 +254,7 @@ public class Details extends JPanel implements ActionListener {
         categoryLabel.setFont(font);
         categoryLabel.setForeground(Color.WHITE);
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.weighty = 0.25;
+        c.weighty = 0.2;
         c.weightx = 0.3;
         c.gridheight = 1;
         c.gridwidth = 1;
@@ -263,7 +272,7 @@ public class Details extends JPanel implements ActionListener {
         category.setFont(font);
         category.setEnabled(admin);
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.weighty = 0.25;
+        c.weighty = 0.2;
         c.weightx = 0.3;
         c.gridheight = 1;
         c.gridwidth = 1;
@@ -275,7 +284,7 @@ public class Details extends JPanel implements ActionListener {
         MassLabel.setFont(font);
         MassLabel.setForeground(Color.WHITE);
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.weighty = 0.25;
+        c.weighty = 0.2;
         c.weightx = 0.3;
         c.gridheight = 1;
         c.gridwidth = 1;
@@ -287,13 +296,37 @@ public class Details extends JPanel implements ActionListener {
         mass.setFont(font);
         mass.setEditable(isAdmin);
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.weighty = 0.25;
+        c.weighty = 0.2;
         c.weightx = 0.3;
         c.gridheight = 1;
         c.gridwidth = 1;
         c.gridx = 2;
         c.gridy = 3;
         textInputsPanel.add(mass, c);
+
+        JLabel pieces = new JLabel("Liczba sztuk: ");
+        pieces.setFont(font);
+        pieces.setForeground(Color.WHITE);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weighty = 0.2;
+        c.weightx = 0.3;
+        c.gridheight = 1;
+        c.gridwidth = 1;
+        c.gridx = 1;
+        c.gridy = 4;
+        textInputsPanel.add(pieces, c);
+
+        JTextField quantity = new JTextField(String.valueOf(produkt.getLiczbaSztuk()));
+        quantity.setFont(font);
+        quantity.setEditable(false);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weighty = 0.2;
+        c.weightx = 0.3;
+        c.gridheight = 1;
+        c.gridwidth = 1;
+        c.gridx = 2;
+        c.gridy = 4;
+        textInputsPanel.add(quantity, c);
 
         JPanel descPanel = new JPanel();
         descPanel.setForeground(Color.WHITE);
@@ -357,7 +390,20 @@ public class Details extends JPanel implements ActionListener {
                             }
                         }
 
+                        // magazyny
+                        int[] selectedIndices = list.getSelectedIndices();
+                        MagazynDao daoM = new MagazynDao();
+                        List<Magazyn> magazyny = daoM.getAll();
+                        List<Magazyn> magazyny_produktu = new ArrayList<>();
+                        int howMany = 0;
+                        for (int i = 0; i < selectedIndices.length; i++) {
+                            System.out.println(list.getModel().getElementAt(selectedIndices[i]));
+                            magazyny_produktu.add(magazyny.get(selectedIndices[i]));
+                            howMany++;
+                        }
+
                         ProduktDao dao = new ProduktDao();
+
                         produkt.setCena(Float.parseFloat(price.getText()));
                         produkt.setKategoria(kategoria);
                         produkt.setNazwaObrazka(imageText.getText());
@@ -365,14 +411,26 @@ public class Details extends JPanel implements ActionListener {
                         produkt.setOpis(descTextArea.getText());
                         produkt.setProducent(prod);
                         produkt.setMasa(Float.parseFloat(mass.getText()));
-                        produkt.setMagazyn(null);
-                        produkt.setZamowienie(null);
+                        produkt.setMagazyn(magazyny_produktu);
+                        if (produkt.getzamowienie() != null) {
+                            if (produkt.getzamowienie().isEmpty()) {
+                                produkt.setZamowienie(null);
+                            }
+                        }
+
                         dao.update(produkt);
                         MainFrame mf = (MainFrame) (JFrame) SwingUtilities.getWindowAncestor(returnButton);
+                        if (produkt.getMagazyn() != null) {
+                            produkt.setLiczbaSztuk(produkt.getMagazyn().size());
+                            produkt.setMagazyn(magazyny_produktu);
+                            dao.update(produkt);
+                        }
                         mf.refreshShop(produkt);
+                        mf.refreshWarehouse();
                     }
                 }
-            });
+            }
+            );
         }
     }
 

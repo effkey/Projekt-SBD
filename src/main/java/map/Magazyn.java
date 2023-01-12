@@ -39,7 +39,7 @@ public class Magazyn {
             inverseJoinColumns = {
                 @JoinColumn(name = "Produkt_idProdukt")}
     )
-    private List<Produkt> produkt = new ArrayList<Produkt>();	//
+    private List<Produkt> produkt = new ArrayList<Produkt>();
 
     public Magazyn() {
     }
@@ -78,11 +78,11 @@ public class Magazyn {
         return "id=" + idMagazynu;
     }
 
-    public void setProdukt(ArrayList<Produkt> prod) {
+    public void setProdukt(List<Produkt> prod) {
         this.produkt = prod;
     }
 
-    public ArrayList<Produkt> getProdukt() {
-        return (ArrayList<Produkt>) this.produkt;
+    public List<Produkt> getProdukt() {
+        return this.produkt;
     }
 }

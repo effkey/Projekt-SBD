@@ -52,33 +52,35 @@ public class ListPanel extends JPanel implements ActionListener {
     public ListPanel(Dimension dim, int cardinality, boolean admin) {
         this.admin = admin;
 //		this.setSize(new Dimension(dim.width, dim.height*10));
-        System.out.println(dim.width + "  " + dim.height);
         this.curResolution = Toolkit.getDefaultToolkit().getScreenSize();
-        if (this.curResolution.width != this.defaultResolution.width || this.curResolution.height != this.defaultResolution.height) {
-            float tmp = this.curResolution.height / (float) (this.defaultResolution.height);
-            System.out.println(tmp);
-            this.scale = this.curResolution.width / (float) (this.defaultResolution.width);
-            if (scale > 1 && tmp > 1) {
-                if (tmp > scale) {
-                    scale = tmp;
-                }
-            } else if (scale > 1 && tmp < 1) {
-                if (scale + tmp < 0) {
-                    scale = tmp;
-                }
-            } else if (scale < 1 && tmp < 1) {
-                if (tmp < scale) {
-                    scale = tmp;
-                }
-            } else if (scale < 1 && tmp > 1) {
-                if (scale + tmp > 0) {
-                    scale = tmp;
+        if (!MainFrame.itWasScalling()) {
+            if (this.curResolution.width != this.defaultResolution.width || this.curResolution.height != this.defaultResolution.height) {
+                float tmp = this.curResolution.height / (float) (this.defaultResolution.height);
+                this.scale = this.curResolution.width / (float) (this.defaultResolution.width);
+                if (scale > 1 && tmp > 1) {
+                    if (tmp > scale) {
+                        scale = tmp;
+                    }
+                } else if (scale > 1 && tmp < 1) {
+                    if (scale + tmp < 0) {
+                        scale = tmp;
+                    }
+                } else if (scale < 1 && tmp < 1) {
+                    if (tmp < scale) {
+                        scale = tmp;
+                    }
+                } else if (scale < 1 && tmp > 1) {
+                    if (scale + tmp > 0) {
+                        scale = tmp;
+                    }
                 }
             }
+
+            this.imageWidth = (int) (this.imageWidth * scale);
+            this.imageHeight = (int) (this.imageHeight * scale);
+            MainFrame.wasScalling();
         }
-        System.out.println(scale);
-        this.imageWidth = (int) (this.imageWidth * scale);
-        this.imageHeight = (int) (this.imageHeight * scale);
+
         this.setPreferredSize(new Dimension(dim.width - ShopLayout.borderPx * 10, cardinality / 2 * imageHeight));
         font = new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 36));
         if (this.admin) {
@@ -103,7 +105,7 @@ public class ListPanel extends JPanel implements ActionListener {
             this.add(add_product);
         }
     }
-    
+
     public void clearProductsPanel() {
         this.removeAll();
         this.revalidate();
@@ -139,7 +141,7 @@ public class ListPanel extends JPanel implements ActionListener {
         price.setFont(font);
         numOfProducts.setFont(font);
 //        }
-        
+
         shortText.setFont(font);
         shortText.setLineWrap(true);
         shortText.setWrapStyleWord(true);
@@ -147,7 +149,6 @@ public class ListPanel extends JPanel implements ActionListener {
 
         price.setEditable(false);
         numOfProducts.setEditable(false);
-        
 
         if (listSize % 2 == 1) {
             listSize /= 2;
@@ -278,15 +279,15 @@ public class ListPanel extends JPanel implements ActionListener {
 
     public void setList(List<String> katList) {
         this.removeAll();
-        while(!this.list.isEmpty()){
+        while (!this.list.isEmpty()) {
             this.removeProdukt(0);
         }
         ProduktDao dao = new ProduktDao();
         ArrayList<Produkt> products = dao.getAll();
-        for(Produkt produkt: products){
-            for(String cat: katList){
-                System.out.println(cat+"    "+produkt.getKategoria().getNazwaKategorii());
-                if(produkt.getKategoria().getNazwaKategorii().equals(cat)){
+        for (Produkt produkt : products) {
+            for (String cat : katList) {
+                System.out.println(cat + "    " + produkt.getKategoria().getNazwaKategorii());
+                if (produkt.getKategoria().getNazwaKategorii().equals(cat)) {
                     this.addProdukt(produkt);
                 }
             }
@@ -342,8 +343,8 @@ public class ListPanel extends JPanel implements ActionListener {
             }
         }
     }
-    
-    public static Dimension getImageDimension(){
+
+    public static Dimension getImageDimension() {
         return new Dimension(imageWidth, imageHeight);
     }
 }

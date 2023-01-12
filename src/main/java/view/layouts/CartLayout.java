@@ -157,7 +157,7 @@ public class CartLayout extends JPanel implements ActionListener {
 
     private void makeMainPanel() {
         this.mainPanel = new Cart(new Dimension(getPreferredSize().width - 3 * borderPx - this.getPreferredSize().width / 10,
-                this.getPreferredSize().height - this.getPreferredSize().height / 8 - 8 * borderPx), 20);
+                this.getPreferredSize().height - this.getPreferredSize().height / 8 - 8 * borderPx), 20, false);
         this.mainPanel.setLayout(null);
         this.mainPanel.setBackground(new Color(188, 69, 69));
 

@@ -23,16 +23,12 @@ import javax.swing.SwingUtilities;
 import map.Kategoria;
 import map.Produkt;
 import dao.KategoriaDao;
-import java.awt.FlowLayout;
 import java.util.ArrayList;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import view.Image;
 import view.MainFrame;
@@ -206,10 +202,12 @@ public class ShopLayout extends JPanel implements ActionListener {
                 System.out.println("Przechodzisz do koszyka");
                 MainFrame mf = (MainFrame) SwingUtilities.getWindowAncestor(this);
                 mf.showCart();
+                mf.refreshCategoryPanel(false);
             } else {
                 System.out.println("Przechodzisz do magazynów");
                 MainFrame mf = (MainFrame) SwingUtilities.getWindowAncestor(this);
                 mf.showWarehouse();
+                mf.refreshCategoryPanel(true);
             }
         }
 

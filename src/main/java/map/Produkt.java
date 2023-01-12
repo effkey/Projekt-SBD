@@ -58,7 +58,7 @@ public class Produkt {
             inverseJoinColumns = {
                 @JoinColumn(name = "Zamowienie_idZamowienie")}
     )
-    private List<Zamowienie> zamowienie = new ArrayList<Zamowienie>();
+    private List<Zamowienie> zamowienie;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -68,7 +68,7 @@ public class Produkt {
             inverseJoinColumns = {
                 @JoinColumn(name = "Magazyn_idMagazynu")}
     )
-    private List<Magazyn> magazyn = new ArrayList<Magazyn>();
+    private List<Magazyn> magazyn;
 
     public Produkt() {
     }
@@ -195,4 +195,25 @@ public class Produkt {
         this.nazwaObrazka = nazwaObrazka;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Produkt other = (Produkt) obj;
+        return this.idProduktu == other.idProduktu;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + this.idProduktu;
+        return hash;
+    }
 }

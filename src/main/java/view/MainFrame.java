@@ -1,9 +1,6 @@
 package view;
 
-import dao.KategoriaDao;
-import dao.ProducentDao;
 import dao.ProduktDao;
-import dao.UzytkownikDao;
 import view.SacPackage.PanelCover;
 import view.SacPackage.PanelLoginAndRegister;
 import view.layouts.Details;
@@ -14,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Locale;
 import javax.swing.JPanel;
 // Brane z maven
@@ -23,11 +19,8 @@ import org.jdesktop.animation.timing.TimingTarget;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
 import org.jdesktop.animation.timing.Animator;
 // Brane z zewnętrznych klas
-import map.Kategoria;
-import map.Producent;
 import map.Produkt;
 import map.Uzytkownik;
-import map.Zamowienie;
 import view.SacPackage.OrderPanel;
 import view.SacPackage.UzytForm;
 import view.layouts.CartLayout;
@@ -49,8 +42,10 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
     private final DecimalFormat df = new DecimalFormat("##0.###", DecimalFormatSymbols.getInstance(Locale.US));  // patrz fractionCover = Double... , po prostu inaczej nie działało
 
     // Z ShopFrame
-    private JPanel[] panels; //0-shopLayout  1-tymczasowe  2-koszyk
+    private JPanel[] panels; //0-shopLayout  1-tymczasowe  2-koszyk   3-userConfig
     //
+
+    private static boolean wasScalling = false;
 
     public MainFrame() {
         test();
@@ -62,14 +57,26 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
     }
 
 // Z ShopFrame
-    public void refreshCategoryPanel() {
-        CartLayout tmp = (CartLayout) this.panels[2];
-        tmp.refreshCategoryPanel();
+    public void refreshCategoryPanel(boolean fromWarehouse) {
+        if (!fromWarehouse) {
+            CartLayout tmp = (CartLayout) this.panels[2];
+            tmp.refreshCategoryPanel();
+        }else{
+            WarehouseLayout tmp = (WarehouseLayout) this.panels[2];
+            tmp.refreshCategoryPanel();
+        }
+
     }
 
     public void refreshShop(Produkt produkt) {
         ShopLayout sl = (ShopLayout) this.panels[0];
         sl.refreshProduct(produkt);
+    }
+    
+        
+    public void refreshWarehouse(){
+        WarehouseLayout tmp = (WarehouseLayout) this.panels[2];
+            tmp.refreshWarehouses();
     }
 
     public void showProductPanel(Produkt produkt) {
@@ -95,7 +102,7 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
         this.panels[3].setVisible(true);
         this.add(this.panels[3]);
         this.pack();
-        setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH); 
+        setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
     }
 
     public void returnToCart() {
@@ -142,6 +149,11 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
     public void addProductToCart(Produkt produkt) {
         CartLayout panel = (CartLayout) this.panels[2];
         panel.addProduct(produkt);
+    }
+    
+    public void addWarehouseProduct(Produkt produkt){
+        WarehouseLayout tmp = (WarehouseLayout) this.panels[2];
+        tmp.addWarehouseProduct(produkt);
     }
 
     public void showOrderDetails() {
@@ -374,4 +386,11 @@ public class MainFrame extends javax.swing.JFrame {     // główny main na dole
     private javax.swing.JLayeredPane Background;
     // End of variables declaration//GEN-END:variables
 
+    public static void wasScalling() {
+        MainFrame.wasScalling = true;
+    }
+
+    public static boolean itWasScalling() {
+        return MainFrame.wasScalling;
+    }
 }
