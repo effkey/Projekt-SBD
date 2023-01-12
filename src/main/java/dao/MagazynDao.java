@@ -22,6 +22,7 @@ public class MagazynDao extends DAO<Magazyn> {
                 + "from map.Magazyn cat ")
                 .getResultList();
         session.getTransaction().commit();
+        session.close();
         if (cat != null) {
             return cat;
         }
