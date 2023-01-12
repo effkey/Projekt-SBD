@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.swing.Icon;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -25,7 +26,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import map.Kategoria;
 import map.Produkt;
 
 import view.Image;
@@ -52,35 +52,37 @@ public class ListPanel extends JPanel implements ActionListener {
     public ListPanel(Dimension dim, int cardinality, boolean admin) {
         this.admin = admin;
 //		this.setSize(new Dimension(dim.width, dim.height*10));
-        System.out.println(dim.width + "  " + dim.height);
         this.curResolution = Toolkit.getDefaultToolkit().getScreenSize();
-        if (this.curResolution.width != this.defaultResolution.width || this.curResolution.height != this.defaultResolution.height) {
-            float tmp = this.curResolution.height / (float) (this.defaultResolution.height);
-            System.out.println(tmp);
-            this.scale = this.curResolution.width / (float) (this.defaultResolution.width);
-            if (scale > 1 && tmp > 1) {
-                if (tmp > scale) {
-                    scale = tmp;
-                }
-            } else if (scale > 1 && tmp < 1) {
-                if (scale + tmp < 0) {
-                    scale = tmp;
-                }
-            } else if (scale < 1 && tmp < 1) {
-                if (tmp < scale) {
-                    scale = tmp;
-                }
-            } else if (scale < 1 && tmp > 1) {
-                if (scale + tmp > 0) {
-                    scale = tmp;
+        if (!MainFrame.itWasScalling()) {
+            if (this.curResolution.width != this.defaultResolution.width || this.curResolution.height != this.defaultResolution.height) {
+                float tmp = this.curResolution.height / (float) (this.defaultResolution.height);
+                this.scale = this.curResolution.width / (float) (this.defaultResolution.width);
+                if (scale > 1 && tmp > 1) {
+                    if (tmp > scale) {
+                        scale = tmp;
+                    }
+                } else if (scale > 1 && tmp < 1) {
+                    if (scale + tmp < 0) {
+                        scale = tmp;
+                    }
+                } else if (scale < 1 && tmp < 1) {
+                    if (tmp < scale) {
+                        scale = tmp;
+                    }
+                } else if (scale < 1 && tmp > 1) {
+                    if (scale + tmp > 0) {
+                        scale = tmp;
+                    }
                 }
             }
+
+            this.imageWidth = (int) (this.imageWidth * scale);
+            this.imageHeight = (int) (this.imageHeight * scale);
+            MainFrame.wasScalling();
         }
-        System.out.println(scale);
-        this.imageWidth = (int) (this.imageWidth * scale);
-        this.imageHeight = (int) (this.imageHeight * scale);
+
         this.setPreferredSize(new Dimension(dim.width - ShopLayout.borderPx * 10, cardinality / 2 * imageHeight));
-        font = new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 40));
+        font = new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 36));
         if (this.admin) {
             JButton add_product = new JButton("Dodaj nowy produkt");
             add_product.setBounds((int) (imageWidth / 4),
@@ -104,6 +106,12 @@ public class ListPanel extends JPanel implements ActionListener {
         }
     }
 
+    public void clearProductsPanel() {
+        this.removeAll();
+        this.revalidate();
+        this.repaint();
+    }
+
     public void addProdukt(Produkt produkt) {
         int listSize = this.list.size();
         if (admin) {
@@ -121,14 +129,12 @@ public class ListPanel extends JPanel implements ActionListener {
             addToCart = new JButton(Image.REMOVE.icon);
         }
         toDetails = new JButton(Image.DETAILS.icon);
-//        if (produkt.getOpis().length() > 100) {
-//            shortText = new JTextArea(produkt.getNazwaProduktu() + "\n\n" + produkt.getOpis().substring(0, 100) + "...");
-//        } else {
 
         String pr = String.valueOf(produkt.getCena());
         if (produkt.getCena() * 100 % 10 == 0) {
             pr += "0";
         }
+        Icon icon = new ImageIcon("src/main/products/" + produkt.getNazwaObrazka());
         shortText = new JTextArea(produkt.getNazwaProduktu());
         price = new JTextField("Cena: " + pr);
         numOfProducts = new JTextField("Ilość: " + String.valueOf(produkt.getLiczbaSztuk()));
@@ -203,6 +209,7 @@ public class ListPanel extends JPanel implements ActionListener {
         this.toDetailsButton.add(toDetails);
         this.numOfProductsField.add(numOfProducts);
         this.priceField.add(price);
+//        this.productsImages.add(productImage);
 
         this.add(shortText);
         this.add(addToCart);
@@ -270,9 +277,23 @@ public class ListPanel extends JPanel implements ActionListener {
         }
     }
 
-    public void setList(List<Kategoria> katList) {
+    public void setList(List<String> katList) {
         this.removeAll();
-        this.list.clear();
+        while (!this.list.isEmpty()) {
+            this.removeProdukt(0);
+        }
+        ProduktDao dao = new ProduktDao();
+        ArrayList<Produkt> products = dao.getAll();
+        for (Produkt produkt : products) {
+            for (String cat : katList) {
+                System.out.println(cat + "    " + produkt.getKategoria().getNazwaKategorii());
+                if (produkt.getKategoria().getNazwaKategorii().equals(cat)) {
+                    this.addProdukt(produkt);
+                }
+            }
+        }
+        this.revalidate();
+        this.repaint();
     }
 
     @Override
@@ -322,8 +343,8 @@ public class ListPanel extends JPanel implements ActionListener {
             }
         }
     }
-    
-    public static Dimension getImageDimension(){
+
+    public static Dimension getImageDimension() {
         return new Dimension(imageWidth, imageHeight);
     }
 }

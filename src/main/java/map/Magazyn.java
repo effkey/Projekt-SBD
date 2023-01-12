@@ -5,10 +5,12 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -17,57 +19,70 @@ import jakarta.persistence.Table;
 @Table(name = "magazyn")
 public class Magazyn {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "idMagazynu", unique = true, nullable = false)
-	private int idMagazynu;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idMagazynu", unique = true, nullable = false)
+    private int idMagazynu;
 
-	@Column(name = "pojemnosc", unique = false, nullable = false)
-	private int pojemnosc;
+    @Column(name = "pojemnosc", unique = false, nullable = false)
+    private int pojemnosc;
 
-	@OneToOne
-	@JoinColumn(name = "Adres_idAdres", referencedColumnName = "idAdresu")
-	private Adres adres;
-	
-	@ManyToMany//(mappedBy = "magazyn")
-	private List<Produkt> produkt = new ArrayList<Produkt>();	//
-	
-	public Magazyn() {
-	}
+    @OneToOne
+    @JoinColumn(name = "Adres_idAdres", referencedColumnName = "idAdresu")
+    private Adres adres;
 
-	public Magazyn(int pojemnosc, Adres adres) {
-		this.pojemnosc = pojemnosc;
-		this.adres = adres;
-	}
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "produktmagazyn",
+            joinColumns = {
+                @JoinColumn(name = "Magazyn_idMagazynu")},
+            inverseJoinColumns = {
+                @JoinColumn(name = "Produkt_idProdukt")}
+    )
+    private List<Produkt> produkt = new ArrayList<Produkt>();
 
-	public int getIdMagazynu() {
-		return idMagazynu;
-	}
+    public Magazyn() {
+    }
 
-	public void setIdMagazynu(int idMagazynu) {
-		this.idMagazynu = idMagazynu;
-	}
+    public Magazyn(int pojemnosc, Adres adres) {
+        this.pojemnosc = pojemnosc;
+        this.adres = adres;
+    }
 
-	public int getPojemnosc() {
-		return pojemnosc;
-	}
+    public int getIdMagazynu() {
+        return idMagazynu;
+    }
 
-	public void setPojemnosc(int pojemnosc) {
-		this.pojemnosc = pojemnosc;
-	}
+    public void setIdMagazynu(int idMagazynu) {
+        this.idMagazynu = idMagazynu;
+    }
 
-	public Adres getAdres() {
-		return adres;
-	}
+    public int getPojemnosc() {
+        return pojemnosc;
+    }
 
-	public void setAdres(Adres adres) {
-		this.adres = adres;
-	}
+    public void setPojemnosc(int pojemnosc) {
+        this.pojemnosc = pojemnosc;
+    }
+
+    public Adres getAdres() {
+        return adres;
+    }
+
+    public void setAdres(Adres adres) {
+        this.adres = adres;
+    }
 
     @Override
     public String toString() {
         return "id=" + idMagazynu;
     }
 
-        
+    public void setProdukt(List<Produkt> prod) {
+        this.produkt = prod;
+    }
+
+    public List<Produkt> getProdukt() {
+        return this.produkt;
+    }
 }

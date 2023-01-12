@@ -1,3 +1,4 @@
+
 package dao;
 
 import java.util.ArrayList;
@@ -60,6 +61,7 @@ public class ProduktDao extends DAO<Produkt> {
 //        session.beginTransaction();
         session.update(produkt);
         session.getTransaction().commit();
+        
     }
     
         public Produkt addProdukt(String nazwaProduktu, float cena,
@@ -82,3 +84,4 @@ public class ProduktDao extends DAO<Produkt> {
     
     
 }
+

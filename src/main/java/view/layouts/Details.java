@@ -1,6 +1,7 @@
 package view.layouts;
 
 import dao.KategoriaDao;
+import dao.MagazynDao;
 import dao.ProducentDao;
 import dao.ProduktDao;
 import javax.swing.JFrame;
@@ -30,12 +31,17 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.util.ArrayList;
+import java.util.List;
+import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import map.Kategoria;
+import map.Magazyn;
 import map.Producent;
 import map.Produkt;
 import view.MainFrame;
@@ -51,6 +57,8 @@ public class Details extends JPanel implements ActionListener {
     private int imageHeight = 144;
     private boolean fromCart;
     private Produkt produkt;
+    private JList<String> list;
+    private JScrollPane scrollPane;
 
     private Font font = new Font("Sans Serif", Font.BOLD, (int) (scale * 40));
 
@@ -100,12 +108,15 @@ public class Details extends JPanel implements ActionListener {
         JLabel logo = new JLabel(view.Image.LOGO.icon);
         panel.add(logo);
 
-        JTextField nameLabel = new JTextField(produkt.getNazwaProduktu());
+        JTextArea nameLabel = new JTextArea(produkt.getNazwaProduktu());
         nameLabel.setFont(font);
         nameLabel.setForeground(Color.WHITE);
         nameLabel.setBackground(Color.black);
-        nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        nameLabel.setLineWrap(true);
+        nameLabel.setWrapStyleWord(true);
+//        nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
         nameLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        nameLabel.setEditable(admin);
         panel.add(nameLabel);
 
         JPanel imagePanel = new JPanel();
@@ -129,33 +140,69 @@ public class Details extends JPanel implements ActionListener {
         gbc_textPanel.gridx = 1;
         gbc_textPanel.gridy = 1;
         this.add(textPanel, gbc_textPanel);
-        textPanel.setLayout(new FlowLayout());
+        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.X_AXIS));
 
         JPanel textInputsPanel = new JPanel();
         textInputsPanel.setBackground(new Color(188, 69, 69));
-        textInputsPanel.setLayout(new GridLayout(4, 3, 0, 0));  //new GridLayout(4, 2, 0, 0)
+        textInputsPanel.setLayout(new GridBagLayout());  //new GridLayout(4, 2, 0, 0)
         textPanel.add(textInputsPanel);
 
-        addToCartButton = new JButton(view.Image.CART_ADD.icon);
-        addToCartButton.addActionListener(this);
-        addToCartButton.setPreferredSize(new Dimension(imageWidth, imageHeight));
-        addToCartButton.setBackground(Color.BLACK);
-        textPanel.add(addToCartButton);
+        GridBagConstraints c = new GridBagConstraints();
+        c.insets = new Insets(5, 5, 5, 5);
+        if (isAdmin) {
+            List<Magazyn> wybraneMagazyny = produkt.getMagazyn();
+            int[] indices = new int[wybraneMagazyny.size()];
+            int index = 0;
+            for (Magazyn mag : wybraneMagazyny) {
+                indices[index] = (mag.getIdMagazynu() - 1);
+                index++;
+            }
 
-//        JLabel pieces = new JLabel("Liczba sztuk: ");
-//        pieces.setFont(font);
-//        pieces.setForeground(Color.WHITE);
-//        textInputsPanel.add(pieces);
-//
-//        SpinnerModel model = new SpinnerNumberModel(this.produkt.getLiczbaSztuk(), 0, 10000, 1);
-//        JSpinner spinner = new JSpinner(model);
-//        spinner.setFont(font);
-//        textInputsPanel.add(spinner);
+            MagazynDao dao = new MagazynDao();
+            List<Magazyn> magazyny = dao.getAll();
+            DefaultListModel<String> model = new DefaultListModel<>();
+            this.list = new JList<>(model);
+            list.setForeground(Color.white);
+            list.setBackground(Color.black);
+            for (Magazyn magazyn : magazyny) {
+//                model.addElement("Magazyn" + String.valueOf(magazyn.getIdMagazynu()));
+                model.addElement(String.valueOf(magazyn.getIdMagazynu()));
+            }
+
+            this.list.setSelectedIndices(indices);
+
+            list.setFont(new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (scale * 40)));
+            JPanel magazins = new JPanel();
+            magazins.setBackground(Color.black);
+            magazins.add(list);
+
+            c.fill = GridBagConstraints.BOTH;
+            c.weighty = 1;
+            c.weightx = 0.4;
+            c.gridheight = 5;
+            c.gridwidth = 1;
+            c.gridx = 3;
+            c.gridy = 0;
+            textInputsPanel.add(magazins, c);
+        } else {
+            addToCartButton = new JButton(view.Image.CART_ADD.icon);
+            addToCartButton.addActionListener(this);
+            addToCartButton.setPreferredSize(new Dimension(imageWidth, imageHeight));
+            addToCartButton.setBackground(Color.BLACK);
+            textPanel.add(addToCartButton);
+        }
 
         JLabel priceLabel = new JLabel("Cena: ");
         priceLabel.setFont(font);
         priceLabel.setForeground(Color.WHITE);
-        textInputsPanel.add(priceLabel);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weighty = 0.2;
+        c.weightx = 0.3;
+        c.gridheight = 1;
+        c.gridwidth = 1;
+        c.gridx = 1;
+        c.gridy = 0;
+        textInputsPanel.add(priceLabel, c);
 
         String pr = String.valueOf(produkt.getCena());
         if (produkt.getCena() * 100 % 10 == 0) {
@@ -164,49 +211,122 @@ public class Details extends JPanel implements ActionListener {
         JTextField price = new JTextField(pr);
         price.setFont(font);
         price.setEditable(isAdmin);
-        textInputsPanel.add(price);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weighty = 0.2;
+        c.weightx = 0.3;
+        c.gridheight = 1;
+        c.gridwidth = 1;
+        c.gridx = 2;
+        c.gridy = 0;
+        textInputsPanel.add(price, c);
 
         JLabel producentLabel = new JLabel("Producent: ");
         producentLabel.setFont(font);
         producentLabel.setForeground(Color.WHITE);
-        textInputsPanel.add(producentLabel);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weighty = 0.2;
+        c.weightx = 0.3;
+        c.gridheight = 1;
+        c.gridwidth = 1;
+        c.gridx = 1;
+        c.gridy = 1;
+        textInputsPanel.add(producentLabel, c);
 
         ProducentDao pDao = new ProducentDao();
         ArrayList<Producent> prod = (ArrayList<Producent>) pDao.getAll();
         JComboBox producent = new JComboBox();
         for (Producent p : prod) {
-            producent.addItem(p);
+            producent.addItem(p.toString());
         }
         producent.setFont(font);
-        producent.setSelectedItem(produkt.getProducent());
-        producent.setEditable(isAdmin);
-        textInputsPanel.add(producent);
+        producent.setSelectedItem(produkt.getProducent().toString());
+        producent.setEnabled(isAdmin);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weighty = 0.2;
+        c.weightx = 0.3;
+        c.gridheight = 1;
+        c.gridwidth = 1;
+        c.gridx = 2;
+        c.gridy = 1;
+        textInputsPanel.add(producent, c);
 
         JLabel categoryLabel = new JLabel("Kategoria: ");
         categoryLabel.setFont(font);
         categoryLabel.setForeground(Color.WHITE);
-        textInputsPanel.add(categoryLabel);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weighty = 0.2;
+        c.weightx = 0.3;
+        c.gridheight = 1;
+        c.gridwidth = 1;
+        c.gridx = 1;
+        c.gridy = 2;
+        textInputsPanel.add(categoryLabel, c);
 
         KategoriaDao kDao = new KategoriaDao();
         ArrayList<Kategoria> kat = (ArrayList<Kategoria>) kDao.getAll();
         JComboBox category = new JComboBox();
         for (Kategoria k : kat) {
-            category.addItem(k);
+            category.addItem(k.toString());
         }
-        category.setSelectedItem(produkt.getKategoria());
+        category.setSelectedItem(produkt.getKategoria().toString());
         category.setFont(font);
-        category.setEditable(admin);
-        textInputsPanel.add(category);
+        category.setEnabled(admin);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weighty = 0.2;
+        c.weightx = 0.3;
+        c.gridheight = 1;
+        c.gridwidth = 1;
+        c.gridx = 2;
+        c.gridy = 2;
+        textInputsPanel.add(category, c);
 
         JLabel MassLabel = new JLabel("Masa: ");
         MassLabel.setFont(font);
         MassLabel.setForeground(Color.WHITE);
-        textInputsPanel.add(MassLabel);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weighty = 0.2;
+        c.weightx = 0.3;
+        c.gridheight = 1;
+        c.gridwidth = 1;
+        c.gridx = 1;
+        c.gridy = 3;
+        textInputsPanel.add(MassLabel, c);
 
         JTextField mass = new JTextField(String.valueOf(produkt.getMasa()));
         mass.setFont(font);
         mass.setEditable(isAdmin);
-        textInputsPanel.add(mass);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weighty = 0.2;
+        c.weightx = 0.3;
+        c.gridheight = 1;
+        c.gridwidth = 1;
+        c.gridx = 2;
+        c.gridy = 3;
+        textInputsPanel.add(mass, c);
+
+        JLabel pieces = new JLabel("Liczba sztuk: ");
+        pieces.setFont(font);
+        pieces.setForeground(Color.WHITE);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weighty = 0.2;
+        c.weightx = 0.3;
+        c.gridheight = 1;
+        c.gridwidth = 1;
+        c.gridx = 1;
+        c.gridy = 4;
+        textInputsPanel.add(pieces, c);
+
+        JTextField quantity = new JTextField(String.valueOf(produkt.getLiczbaSztuk()));
+        quantity.setFont(font);
+        quantity.setEditable(false);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weighty = 0.2;
+        c.weightx = 0.3;
+        c.gridheight = 1;
+        c.gridwidth = 1;
+        c.gridx = 2;
+        c.gridy = 4;
+        textInputsPanel.add(quantity, c);
 
         JPanel descPanel = new JPanel();
         descPanel.setForeground(Color.WHITE);
@@ -250,14 +370,38 @@ public class Details extends JPanel implements ActionListener {
             imageText.setPreferredSize(ListPanel.getImageDimension());
             imageText.setText(produkt.getNazwaObrazka());
             imageText.setFont(font);
-//            imageText.setHorizontalAlignment(SwingConstants.CENTER);
             imagePanel.add(imageText);
             save.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (e.getSource() == save) {
-                        Kategoria kategoria = (Kategoria) category.getSelectedItem();
-                        Producent prod = (Producent) producent.getSelectedItem();
+                        Kategoria kategoria = produkt.getKategoria();
+                        Producent prod = produkt.getProducent();
+                        for (Kategoria k : kDao.getAll()) {
+                            if (k.getNazwaKategorii().equals(category.getSelectedItem())) {
+                                kategoria = k;
+                                break;
+                            }
+                        }
+                        for (Producent p : pDao.getAll()) {
+                            if (p.getNazwaProducenta().equals(producent.getSelectedItem())) {
+                                prod = p;
+                                break;
+                            }
+                        }
+
+                        // magazyny
+                        int[] selectedIndices = list.getSelectedIndices();
+                        MagazynDao daoM = new MagazynDao();
+                        List<Magazyn> magazyny = daoM.getAll();
+                        List<Magazyn> magazyny_produktu = new ArrayList<>();
+                        int howMany = 0;
+                        for (int i = 0; i < selectedIndices.length; i++) {
+                            System.out.println(list.getModel().getElementAt(selectedIndices[i]));
+                            magazyny_produktu.add(magazyny.get(selectedIndices[i]));
+                            howMany++;
+                        }
+
                         ProduktDao dao = new ProduktDao();
 
                         produkt.setCena(Float.parseFloat(price.getText()));
@@ -267,12 +411,26 @@ public class Details extends JPanel implements ActionListener {
                         produkt.setOpis(descTextArea.getText());
                         produkt.setProducent(prod);
                         produkt.setMasa(Float.parseFloat(mass.getText()));
+                        produkt.setMagazyn(magazyny_produktu);
+                        if (produkt.getzamowienie() != null) {
+                            if (produkt.getzamowienie().isEmpty()) {
+                                produkt.setZamowienie(null);
+                            }
+                        }
+
                         dao.update(produkt);
                         MainFrame mf = (MainFrame) (JFrame) SwingUtilities.getWindowAncestor(returnButton);
+                        if (produkt.getMagazyn() != null) {
+                            produkt.setLiczbaSztuk(produkt.getMagazyn().size());
+                            produkt.setMagazyn(magazyny_produktu);
+                            dao.update(produkt);
+                        }
                         mf.refreshShop(produkt);
+                        mf.refreshWarehouse();
                     }
                 }
-            });
+            }
+            );
         }
     }
 

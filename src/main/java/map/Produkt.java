@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -49,11 +50,25 @@ public class Produkt {
     @JoinColumn(name = "Producent_idProducent")
     private Producent producent;
 
-    @ManyToMany(mappedBy = "produkt")
-    private List<Zamowienie> zamowienie = new ArrayList<Zamowienie>(); 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "sztukiproduktu",
+            joinColumns = {
+                @JoinColumn(name = "Produkt_idProdukt")},
+            inverseJoinColumns = {
+                @JoinColumn(name = "Zamowienie_idZamowienie")}
+    )
+    private List<Zamowienie> zamowienie;
 
-    @ManyToMany(mappedBy = "produkt")
-    private List<Magazyn> magazyn = new ArrayList<Magazyn>();
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "produktmagazyn",
+            joinColumns = {
+                @JoinColumn(name = "Produkt_idProdukt")},
+            inverseJoinColumns = {
+                @JoinColumn(name = "Magazyn_idMagazynu")}
+    )
+    private List<Magazyn> magazyn;
 
     public Produkt() {
     }
@@ -180,4 +195,25 @@ public class Produkt {
         this.nazwaObrazka = nazwaObrazka;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Produkt other = (Produkt) obj;
+        return this.idProduktu == other.idProduktu;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + this.idProduktu;
+        return hash;
+    }
 }

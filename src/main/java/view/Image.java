@@ -1,24 +1,39 @@
 package view;
 
+import java.awt.Toolkit;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 public enum Image {
-	CART(new ImageIcon("src/main/images/cart.png")),
-	CART_ADD(new ImageIcon("src/main/images/add_to_cart.png")),
-	USER(new ImageIcon("src/main/images/user.png")),
-	DETAILS(new ImageIcon("src/main/images/details.png")),
-	LOG_OUT(new ImageIcon("src/main/images/log_out.png")),
-	LOGO(new ImageIcon("src/main/images/LOGO.png")),
-        RETURN(new ImageIcon("src/main/images/return.png")),
-        REMOVE(new ImageIcon("src/main/images/REMOVE.png")),
-        SAVE(new ImageIcon("src/main/images/save.png")),
-        EDIT_SAVE(new ImageIcon("src/main/images/edit_save.png")),
-        WAREHOUSE(new ImageIcon("src/main/images/warehouse.png")),
-        EMPTY(new ImageIcon("src/main/images/empty_image.png"));
+    
+	CART("cart.png"),
+	CART_ADD("add_to_cart.png"),
+	USER("user.png"),
+	DETAILS("details.png"),
+	LOG_OUT("log_out.png"),
+	LOGO("LOGO.png"),
+        RETURN("return.png"),
+        REMOVE("REMOVE.png"),
+        SAVE("save.png"),
+        EDIT_SAVE("edit_save.png"),
+        WAREHOUSE("warehouse.png"),
+        EMPTY("empty_image.png");
 	
 	public ImageIcon icon;
-	private Image(ImageIcon icon) {
-		this.icon = icon;
+	private Image(String fileName) {
+            int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
+            String source;
+            
+            System.out.println("screenWidth= "+screenWidth);
+            
+            if(screenWidth >= 2400){
+                source = "src/main/images-2k-4k/" + fileName; 
+            }else if(screenWidth<2400 && screenWidth>1800){
+                source = "src/main/images-fullHD/" + fileName; 
+            }else{
+                source = "src/main/images-HD/" + fileName; 
+            }
+            
+            this.icon = new ImageIcon(source);
 	}
 }

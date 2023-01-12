@@ -37,6 +37,7 @@ public class CartLayout extends JPanel implements ActionListener {
     private JPanel categoryPanel = new JPanel();
     JLabel quantity;
     JLabel sum;
+    JLabel mass;
 
     public CartLayout() {
         this.setLayout(null);
@@ -89,38 +90,74 @@ public class CartLayout extends JPanel implements ActionListener {
     public void refreshCategoryPanel() {
         float sumFloat = 0;
         int numOf = 0;
+        float massFloat = 0;
         ArrayList<Produkt> products = (ArrayList<Produkt>) this.mainPanel.getProducts();
         ArrayList<Integer> numOfProducts = (ArrayList<Integer>) this.mainPanel.getNumOfProducts();
         int i = 0;
         for (Produkt p : products) {
             sumFloat += p.getCena() * (int) (numOfProducts.get(i));
             numOf += (int) (numOfProducts.get(i));
+            massFloat += p.getMasa() * (int) (numOfProducts.get(i));
             i++;
         }
         quantity.setText(String.valueOf(numOf));
-        sum.setText(String.valueOf(sumFloat));
-        // proszę wymyśl tu jakieś sensowne wyświetlanie tych informacji
-        // liczę na twoją kreatywność
+        if (sumFloat * 100 % 10 == 0) {
+            sum.setText(String.valueOf(Math.round(sumFloat*100)/100.0) + "0zł");
+        } else {
+            sum.setText(String.valueOf(Math.round(sumFloat * 100) / 100.0) + "zł");
+        }
+
+        if (massFloat * 100 % 10 == 0) {
+            mass.setText(String.valueOf(Math.round(massFloat*100)/100.0)+"0kg");
+        }else {
+            mass.setText(String.valueOf(Math.round(massFloat * 100) / 100.0) + "kg");
+        }
     }
+    
 
     public void makeCategoryPanel() {
-        this.categoryPanel.setLayout(new FlowLayout());
-        Font font = new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (40*scale));
+        this.categoryPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        Font font = new Font(Font.SANS_SERIF, Font.CENTER_BASELINE, (int) (40 * scale));
         sum = new JLabel();
         sum.setFont(font);
         sum.setForeground(Color.white);
+        sum.setPreferredSize(new Dimension(this.categoryPanel.getSize().width - 2 * borderPx, this.categoryPanel.getSize().width / 3));
+
         quantity = new JLabel();
         quantity.setFont(font);
         quantity.setForeground(Color.white);
+        quantity.setPreferredSize(new Dimension(this.categoryPanel.getSize().width - 2 * borderPx, this.categoryPanel.getSize().width / 3));
+
+        mass = new JLabel();
+        mass.setFont(font);
+        mass.setForeground(Color.white);
+        mass.setPreferredSize(new Dimension(this.categoryPanel.getSize().width - 2 * borderPx, this.categoryPanel.getSize().width / 3));
+
+        JLabel tmp1 = new JLabel("Wartość:");
+        tmp1.setFont(font);
+        tmp1.setForeground(Color.white);
+
+        JLabel tmp2 = new JLabel("Liczność:");
+        tmp2.setFont(font);
+        tmp2.setForeground(Color.white);
+
+        JLabel tmp3 = new JLabel("Masa:");
+        tmp3.setFont(font);
+        tmp3.setForeground(Color.white);
+
+        this.categoryPanel.add(tmp1);
         this.categoryPanel.add(sum);
+        this.categoryPanel.add(tmp2);
         this.categoryPanel.add(quantity);
+        this.categoryPanel.add(tmp3);
+        this.categoryPanel.add(mass);
         this.categoryPanel.setBackground(Color.black);
         this.refreshCategoryPanel();
     }
 
     private void makeMainPanel() {
         this.mainPanel = new Cart(new Dimension(getPreferredSize().width - 3 * borderPx - this.getPreferredSize().width / 10,
-                this.getPreferredSize().height - this.getPreferredSize().height / 8 - 8 * borderPx), 20);
+                this.getPreferredSize().height - this.getPreferredSize().height / 8 - 8 * borderPx), 20, false);
         this.mainPanel.setLayout(null);
         this.mainPanel.setBackground(new Color(188, 69, 69));
 
