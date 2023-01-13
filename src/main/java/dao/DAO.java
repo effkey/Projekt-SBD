@@ -58,10 +58,11 @@ public final void delete(T obj) {
 
 public final void update(T obj) {
     Session session = this.getSession();
-    session.merge(obj);
+//    session.merge(obj);
     Transaction tx = this.getTransaction(session);
     session.update(obj);
     tx.commit();
+//    session.close();
 }
 
 public T getById(Long id) {
