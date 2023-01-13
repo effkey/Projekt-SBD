@@ -418,14 +418,14 @@ public class Details extends JPanel implements ActionListener {
                             }
                         }
 
-                        dao.update(produkt);
-                        produktPopPup();
                         MainFrame mf = (MainFrame) (JFrame) SwingUtilities.getWindowAncestor(returnButton);
                         if (produkt.getMagazyn() != null) {
                             produkt.setLiczbaSztuk(produkt.getMagazyn().size());
-                            produkt.setMagazyn(magazyny_produktu);
+                            dao.update(produkt);
+                        } else {
                             dao.update(produkt);
                         }
+                        produktPopPup();
                         mf.refreshShop(produkt);
                         mf.refreshWarehouse();
                     }
@@ -452,10 +452,11 @@ public class Details extends JPanel implements ActionListener {
         }
 
     }
-        private void produktPopPup(){
-        
-                Object[] options = {"OK"};
-                JOptionPane.showOptionDialog(null,
+
+    private void produktPopPup() {
+
+        Object[] options = {"OK"};
+        JOptionPane.showOptionDialog(null,
                 "Produkt zosta? zaktualizowany",
                 "",
                 JOptionPane.YES_NO_CANCEL_OPTION,

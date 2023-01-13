@@ -358,7 +358,7 @@ public class WarehouseLayout extends JPanel implements ActionListener {
                     adresTemp.setNrLokalu(null);
                 } else {
                     tmp = Integer.parseInt(this.apartNumField.getText());
-                    adresTemp.setNrLokalu(null);
+                    adresTemp.setNrLokalu(tmp);
                 }
 
                 adresTemp.setZamowienie(null);
@@ -395,7 +395,7 @@ public class WarehouseLayout extends JPanel implements ActionListener {
                 magazynTemp.setProdukt(products);
                 this.warehouses.set(this.idxWarehouse, magazynTemp);
                 mDao.update(magazynTemp);
-
+ 
                 ProduktDao pDao = new ProduktDao();
                 ArrayList<Produkt> productsTmp = pDao.getAll();
                 for (int i = 0; i < productsTmp.size(); i++) {
@@ -403,7 +403,9 @@ public class WarehouseLayout extends JPanel implements ActionListener {
                         int temp = productsTmp.get(i).getMagazyn().size();
                         productsTmp.get(i).setLiczbaSztuk(temp);
 //                            productsTmp.get(i).setMagazyn();
+
                         pDao.update(productsTmp.get(i));
+                         
 //                        System.out.println(productsTmp.get(i));
                     }
                 }

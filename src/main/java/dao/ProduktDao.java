@@ -29,6 +29,7 @@ public class ProduktDao extends DAO<Produkt> {
                 + "from map.Produkt p ")
                 .getResultList();
         session.getTransaction().commit();
+        session.close();
         if (cat != null) {
             return cat;
         }
@@ -37,7 +38,7 @@ public class ProduktDao extends DAO<Produkt> {
     }
 
     public void updateProdukt(Produkt obj) {
-        Session session = this.getSession();
+        Session session = HibernateUtil.getSession();// this.getSession();
         session.beginTransaction();
 //        Produkt produkt = (Produkt) session.createQuery(
 //                "select p "
@@ -61,7 +62,7 @@ public class ProduktDao extends DAO<Produkt> {
 //        session.beginTransaction();
         session.update(produkt);
         session.getTransaction().commit();
-        
+        session.close();
     }
     
         public Produkt addProdukt(String nazwaProduktu, float cena,
