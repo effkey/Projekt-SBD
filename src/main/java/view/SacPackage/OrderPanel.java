@@ -195,33 +195,32 @@ public class OrderPanel extends javax.swing.JPanel {
         orderButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {    // tutaj będzie trzeba dodać funkcjonalność związaną z dodaniem do listy zamówień danego zamówienia, powrót do widoku sklepu
-                
-                
-                //
-                // Jeśli wpisano nowy adres, dodaj go do tabeli adresów (if !którykolwiekAdresZListyKliknięty)
-                // Narazie jest, gdy wybrano opcję dodaj nowy adres w liście adresów
-                if(adresList.getSelectedIndex() == 0)   {   // jeśli wybrano pierwszą pozycję na liście, a zawsze nią będzie "dodaj nowy adres"
-                    AdresDao adresDao = new AdresDao();
-                    int code = Integer.parseInt(txtCode.getText());     // musi być tak bo inaczej czemuś wywala error
-                    int nr = Integer.parseInt(txtNrlocal.getText());
-                    adresDao.addAdres(code, txtCity.getText(), txtNumber.getText(), nr, txtStreet.getText());  
-                }
-                
                 //
                 // Jeśli nie wybrano adresu/nie wypełniono wszystkich pól adresu, nie wybrano sposobu realizacji zwróć popup
                 //
-//                if() {
-//                    JOptionPane.showMessageDialog(null, "Nie podano wszystkich informacji potrzebnych do złożenia zamówienia", "", JOptionPane.INFORMATION_MESSAGE);
-//                }
+                if(adresList.getSelectedIndex() == -1 || realizacjaList.getSelectedIndex() == -1) {     // jeśli nie wybrano nic w żadnej liście
+                    JOptionPane.showMessageDialog(null, "Nie podano wszystkich informacji potrzebnych do złożenia zamówienia", "", JOptionPane.INFORMATION_MESSAGE);
+                }
+                else {
+                    //
+                    // Jeśli wpisano nowy adres, dodaj go do tabeli adresów (if !którykolwiekAdresZListyKliknięty)
+                    // Narazie jest, gdy wybrano opcję dodaj nowy adres w liście adresów
+                    if(adresList.getSelectedIndex() == 0)   {   // jeśli wybrano pierwszą pozycję na liście, a zawsze nią będzie "dodaj nowy adres"
+                        AdresDao adresDao = new AdresDao();
+                        int code = Integer.parseInt(txtCode.getText());     // musi być tak bo inaczej czemuś wywala error
+                        int nr = Integer.parseInt(txtNrlocal.getText());
+                        adresDao.addAdres(code, txtCity.getText(), txtNumber.getText(), nr, txtStreet.getText());  
+                    }
                 
                 
-                //
-                // Tutaj funkcjonalność dodania do listy zamówień danego zamówienia(
-                //
+                    //
+                    // Tutaj funkcjonalność dodania do listy zamówień danego zamówienia(
+                    //
                 
-                JOptionPane.showMessageDialog(null, "Dodano zamówienie do listy zamówień.", "", JOptionPane.INFORMATION_MESSAGE);
-                MainFrame frame = (MainFrame) (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, (JComponent) e.getSource());  // zdobądź rodzica (czyli JFrame)
-                frame.returnToShop();
+                    JOptionPane.showMessageDialog(null, "Dodano zamówienie do listy zamówień.", "", JOptionPane.INFORMATION_MESSAGE);
+                    MainFrame frame = (MainFrame) (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, (JComponent) e.getSource());  // zdobądź rodzica (czyli JFrame)
+                    frame.returnToShop();
+                } 
             }
         });
         
