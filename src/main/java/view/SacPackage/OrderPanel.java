@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import map.Adres;
 import dao.SposobRealizacjiDao;
+import dao.ZamowienieDao;
 import java.util.List;
 import javax.swing.JFormattedTextField;
 import javax.swing.JTextField;
@@ -95,20 +96,6 @@ public class OrderPanel extends javax.swing.JPanel {
         txtNrlocal.setBounds(150, 410, 400, 45);
         this.add(txtNrlocal);
         
-//        Button addAdress = new Button();
-//        addAdress.setBackground(new Color(196, 53, 53));
-//        addAdress.setForeground(new Color(250, 250, 250));
-//        addAdress.setText("Dodaj adres do listy");
-//        addAdress.setBounds(150, 475, 140, 35);
-//        this.add(addAdress);
-//        
-//        addAdress.addActionListener(new ActionListener() {  // tutaj dodać wpisany adres do bazy
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                JOptionPane.showMessageDialog(null, "Dodano adres do listy adresów.", "", JOptionPane.INFORMATION_MESSAGE);
-//            }
-//        });
-        
         JList<String> adresList = new JList<String>();   // lista adresów, zwykła, od razu wypisana
         //
         //  Uzyskaj z bazy adresy i wpisz je do tablicy adresy
@@ -156,8 +143,7 @@ public class OrderPanel extends javax.swing.JPanel {
             } 
             else {
                 sposobModel.addElement(sr.getSposReal() + ", koszt: " + sr.getKoszt() + " zł, czas wysyłki: " + sr.getCzasWysylki() + " dni" + czyWniesienie(sr.isWniesienie()));
-            }
-            
+            }  
         }
         
         realizacjaList.setModel(sposobModel);  //  ustaw otrzymane sposoby w tablicy do listy
@@ -199,7 +185,7 @@ public class OrderPanel extends javax.swing.JPanel {
                 // Jeśli nie wybrano adresu/nie wypełniono wszystkich pól adresu, nie wybrano sposobu realizacji zwróć popup
                 //
                 if(adresList.getSelectedIndex() == -1 || realizacjaList.getSelectedIndex() == -1) {     // jeśli nie wybrano nic w żadnej liście
-                    JOptionPane.showMessageDialog(null, "Nie podano wszystkich informacji potrzebnych do złożenia zamówienia", "", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Nie podano wszystkich informacji potrzebnych do złożenia zamówienia.", "", JOptionPane.INFORMATION_MESSAGE);
                 }
                 else {
                     //
@@ -209,13 +195,15 @@ public class OrderPanel extends javax.swing.JPanel {
                         AdresDao adresDao = new AdresDao();
                         int code = Integer.parseInt(txtCode.getText());     // musi być tak bo inaczej czemuś wywala error
                         int nr = Integer.parseInt(txtNrlocal.getText());
-                        adresDao.addAdres(code, txtCity.getText(), txtNumber.getText(), nr, txtStreet.getText());  
+                        Adres adres = new Adres(txtCity.getText(), code, txtStreet.getText(), txtNumber.getText(), nr);
+                        adresDao.addAdres(adres);  
                     }
-                
                 
                     //
                     // Tutaj funkcjonalność dodania do listy zamówień danego zamówienia(
                     //
+                    ZamowienieDao zamowienieDao = new ZamowienieDao();
+//                    zamowienieDao
                 
                     JOptionPane.showMessageDialog(null, "Dodano zamówienie do listy zamówień.", "", JOptionPane.INFORMATION_MESSAGE);
                     MainFrame frame = (MainFrame) (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, (JComponent) e.getSource());  // zdobądź rodzica (czyli JFrame)

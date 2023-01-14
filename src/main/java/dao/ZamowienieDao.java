@@ -9,6 +9,13 @@ public class ZamowienieDao extends DAO<Zamowienie>{
         this.setmodelClass(map.Zamowienie.class);
     }
 
+    public Zamowienie addZamowienie() {
+        
+        
+        
+        return null;
+    }
+    
     @Override
     public List<Zamowienie> search(Zamowienie criteria) {
         return null;
