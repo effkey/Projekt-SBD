@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import map.Adres;
 import dao.SposobRealizacjiDao;
+import dao.UzytkownikDao;
 import dao.ZamowienieDao;
 import java.util.List;
 import javax.swing.JFormattedTextField;
@@ -33,6 +34,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import map.SposobRealizacji;
+import map.Uzytkownik;
+import map.Zamowienie;
 
 
 /**
@@ -184,27 +187,41 @@ public class OrderPanel extends javax.swing.JPanel {
                 //
                 // Jeśli nie wybrano adresu/nie wypełniono wszystkich pól adresu, nie wybrano sposobu realizacji zwróć popup
                 //
-                if(adresList.getSelectedIndex() == -1 || realizacjaList.getSelectedIndex() == -1) {     // jeśli nie wybrano nic w żadnej liście
+                if(adresList.getSelectedIndex() == -1 || realizacjaList.getSelectedIndex() == -1 || txtCity.getText() == "" || txtStreet.getText() == "" || txtNumber.getText() == "" || txtCode.getText() == "" || txtNrlocal.getText() == "") {
                     JOptionPane.showMessageDialog(null, "Nie podano wszystkich informacji potrzebnych do złożenia zamówienia.", "", JOptionPane.INFORMATION_MESSAGE);
                 }
                 else {
-                    //
-                    // Jeśli wpisano nowy adres, dodaj go do tabeli adresów (if !którykolwiekAdresZListyKliknięty)
-                    // Narazie jest, gdy wybrano opcję dodaj nowy adres w liście adresów
+                    // Gdy wybrano opcję dodaj nowy adres dodaj go do tabeli adresów
+
+                    // Tutaj w ten sposób oszukujemy, tworząć obiekt adres nawet jeśli nie trzeba bo jak w ifie to potem go nie przekaże do zamówienia (pierwszy if z zamówieniem)
+                    int code = 0;
+                    int nr = 0;
+                    Adres adres = new Adres(txtCity.getText(), code, txtStreet.getText(), txtNumber.getText(), nr);
                     if(adresList.getSelectedIndex() == 0)   {   // jeśli wybrano pierwszą pozycję na liście, a zawsze nią będzie "dodaj nowy adres"
                         AdresDao adresDao = new AdresDao();
-                        int code = Integer.parseInt(txtCode.getText());     // musi być tak bo inaczej czemuś wywala error
-                        int nr = Integer.parseInt(txtNrlocal.getText());
-                        Adres adres = new Adres(txtCity.getText(), code, txtStreet.getText(), txtNumber.getText(), nr);
+                        code = Integer.parseInt(txtCode.getText());     // musi być tak bo inaczej czemuś wywala error
+                        nr = Integer.parseInt(txtNrlocal.getText());
+                        adres = new Adres(txtCity.getText(), code, txtStreet.getText(), txtNumber.getText(), nr);
                         adresDao.addAdres(adres);  
                     }
                 
                     //
-                    // Tutaj funkcjonalność dodania do listy zamówień danego zamówienia(
+                    // Tutaj funkcjonalność dodania do listy zamówień danego zamówienia
                     //
+                    PanelLoginAndRegister plr = new PanelLoginAndRegister();
+                    AdresDao adresDao = new AdresDao();
+                    SposobRealizacjiDao sposobRealizacjiDao = new SposobRealizacjiDao();
                     ZamowienieDao zamowienieDao = new ZamowienieDao();
-//                    zamowienieDao
-                
+                    
+                    if(adresList.getSelectedIndex() == 0) {
+                        Zamowienie zamowienie = new Zamowienie(uwagiField.getText(), adres, sposobRealizacjiDao.getById((long) realizacjaList.getSelectedIndex()), plr.getUzytkownik());
+                        zamowienieDao.addZamowienie(zamowienie);
+                    }
+                    else {
+                        Zamowienie zamowienie = new Zamowienie(uwagiField.getText(), adresDao.getById((long) adresList.getSelectedIndex()), sposobRealizacjiDao.getById((long) realizacjaList.getSelectedIndex()), plr.getUzytkownik());
+                        zamowienieDao.addZamowienie(zamowienie);
+                    }
+                                
                     JOptionPane.showMessageDialog(null, "Dodano zamówienie do listy zamówień.", "", JOptionPane.INFORMATION_MESSAGE);
                     MainFrame frame = (MainFrame) (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, (JComponent) e.getSource());  // zdobądź rodzica (czyli JFrame)
                     frame.returnToShop();

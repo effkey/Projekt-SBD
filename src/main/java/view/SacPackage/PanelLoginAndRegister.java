@@ -37,6 +37,8 @@ public class PanelLoginAndRegister extends JPanel {
     private MyTextField txtUserLog;
 
     private MyPasswordField txtPassReg;
+    
+    private static Uzytkownik uzytkownik;
 
     public PanelLoginAndRegister() {
         initComponents();
@@ -44,6 +46,14 @@ public class PanelLoginAndRegister extends JPanel {
         initLogin();
         login.setVisible(false);
         register.setVisible(true);
+    }
+    
+    public static Uzytkownik getUzytkownik() {  // metoda do uzyskiwania aktualnie zalogowanego użytkownika
+        return uzytkownik;
+    }
+    
+    public void setUzytkownik(Uzytkownik uzytkownik) {
+        this.uzytkownik = uzytkownik;
     }
 
     private void initRegister() {
@@ -101,6 +111,7 @@ public class PanelLoginAndRegister extends JPanel {
                     //user = dao.getUser(pass, login);
                     if (!"".equals(login) && !"".equals(pass)) {
                     user = dao.getUser(pass, login);
+                    setUzytkownik(user);
                     if (user != null) {
                         registrySuccesfull();
                         MainFrame frame = (MainFrame) (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, (JComponent) e.getSource());  // zdobądź rodzica (czyli JFrame)
@@ -192,6 +203,7 @@ public class PanelLoginAndRegister extends JPanel {
                 String login = txtUserLog.getText(), pass = txtPassLog.getText();
                 if (!"".equals(login) && !"".equals(pass)) {
                     user = dao.getUser(pass, login);
+                    setUzytkownik(user);
                     if (user != null) {
                         MainFrame frame = (MainFrame) (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, (JComponent) e.getSource());  // zdobądź rodzica (czyli JFrame)
                         frame.getContentPane().removeAll();     // by usunąć wszystko co było na ekranie logowania
