@@ -117,6 +117,7 @@ public class OrderPanel extends javax.swing.JPanel {
         adresy = adresDao.getAll();     // przekaż wszystkie adresy do tablicy
         
         DefaultListModel adresModel = new DefaultListModel();   // ponieważ JList nie może brać danych z typu ArrayList, musimy przekonwertować
+        adresModel.addElement("Wybieram opcję nowego adresu");      // musi być tak bo inaczej się nie da, jeśli chcemy dodać adres wpisując to zaznaczamy tą opcję
         for (Adres adres : adresy) {
             adresModel.addElement("Miasto: " + adres.getMiasto() + ", kod pocztowy: " + adres.getKodPocztowy() + ", ulica: " + adres.getUlica() + ", numer budynku: " + adres.getNrBudynku() + ", numer lokalu: " + adres.getNrLokalu());
         }
@@ -178,13 +179,10 @@ public class OrderPanel extends javax.swing.JPanel {
         infoLabel.setBounds(150, 710, size.width, size.height);
         this.add(infoLabel);
         
-        //
-        // Tutaj textfield dodać
-        //
         MyTextField uwagiField = new MyTextField();
         uwagiField.setHint("Wpisz uwagi do zamówienia");
         uwagiField.setBackground(Color.WHITE);
-        uwagiField.setBounds(150, 800, 770, 45);
+        uwagiField.setBounds(150, 800, 990, 45);
         this.add(uwagiField);
 
         Button orderButton = new Button();
@@ -200,8 +198,14 @@ public class OrderPanel extends javax.swing.JPanel {
                 
                 
                 //
-                // Jeśli wpisano nowy adres, dodaj go do listy adresów (if !którykolwiekAdresZListyKliknięty)
-                //
+                // Jeśli wpisano nowy adres, dodaj go do tabeli adresów (if !którykolwiekAdresZListyKliknięty)
+                // Narazie jest, gdy wybrano opcję dodaj nowy adres w liście adresów
+                if(adresList.getSelectedIndex() == 0)   {   // jeśli wybrano pierwszą pozycję na liście, a zawsze nią będzie "dodaj nowy adres"
+                    AdresDao adresDao = new AdresDao();
+                    int code = Integer.parseInt(txtCode.getText());     // musi być tak bo inaczej czemuś wywala error
+                    int nr = Integer.parseInt(txtNrlocal.getText());
+                    adresDao.addAdres(code, txtCity.getText(), txtNumber.getText(), nr, txtStreet.getText());  
+                }
                 
                 //
                 // Jeśli nie wybrano adresu/nie wypełniono wszystkich pól adresu, nie wybrano sposobu realizacji zwróć popup

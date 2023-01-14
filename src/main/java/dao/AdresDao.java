@@ -28,9 +28,19 @@ public class AdresDao extends DAO<Adres> {
         return null;
     }
 
-    public Adres addAdres(Adres adres) {
+    public Adres addAdres(int kodPocztowy, String miasto, String nrBudynku, int nrLokalu, String ulica) {
         Session session = this.getSession();
         session.beginTransaction();
+        
+        // Przypisz dane
+        Adres adres = new Adres();
+        adres.setKodPocztowy(kodPocztowy);
+        adres.setMiasto(miasto);
+        adres.setNrBudynku(nrBudynku);
+        adres.setNrLokalu(nrLokalu);
+        adres.setUlica(ulica);
+        //
+        
         session.persist(adres);
         session.getTransaction().commit();
         session.close();
