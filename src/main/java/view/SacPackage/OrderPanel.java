@@ -9,10 +9,29 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import view.MainFrame;
 import view.SacPackage.Button;
+import view.PopUps;
+import dao.AdresDao;
+import java.util.ArrayList;
+import javax.swing.DefaultListModel;
+import map.Adres;
+import dao.SposobRealizacjiDao;
+import java.util.List;
+import javax.swing.JFormattedTextField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import map.SposobRealizacji;
 
 
 /**
@@ -20,12 +39,22 @@ import view.SacPackage.Button;
  * @author gs
  */
 public class OrderPanel extends javax.swing.JPanel {
+
+    private ArrayList<Adres> adresy;    // tutaj zapisywane będą adresy brane z bazy i z tabeli utworzony jest JList
+    private List<SposobRealizacji> sposobyRealizacji;     // a tutaj sposoby realizacji
     
     public OrderPanel() {
         initComponents();
         init();
     }
 
+    private String czyWniesienie(boolean b) {   // do ładnego sformatowania tekstu przy sposobach realizacji
+        if(b) {
+            return(", z wniesieniem");
+        }
+        return(", bez wniesienia");
+    }
+    
     private void init() {
         this.setBackground(Color.BLACK);
         
@@ -66,94 +95,144 @@ public class OrderPanel extends javax.swing.JPanel {
         txtNrlocal.setBounds(150, 410, 400, 45);
         this.add(txtNrlocal);
         
-        Button addAdress = new Button();
-        addAdress.setBackground(new Color(196, 53, 53));
-        addAdress.setForeground(new Color(250, 250, 250));
-        addAdress.setText("Dodaj adres do listy");
-        addAdress.setBounds(150, 475, 140, 35);
-        this.add(addAdress);
+//        Button addAdress = new Button();
+//        addAdress.setBackground(new Color(196, 53, 53));
+//        addAdress.setForeground(new Color(250, 250, 250));
+//        addAdress.setText("Dodaj adres do listy");
+//        addAdress.setBounds(150, 475, 140, 35);
+//        this.add(addAdress);
+//        
+//        addAdress.addActionListener(new ActionListener() {  // tutaj dodać wpisany adres do bazy
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                JOptionPane.showMessageDialog(null, "Dodano adres do listy adresów.", "", JOptionPane.INFORMATION_MESSAGE);
+//            }
+//        });
         
-        addAdress.addActionListener(new ActionListener() {  // tutaj dodać wpisany adres do bazy
+        JList<String> adresList = new JList<String>();   // lista adresów, zwykła, od razu wypisana
+        //
+        //  Uzyskaj z bazy adresy i wpisz je do tablicy adresy
+        //
+        AdresDao adresDao = new AdresDao();
+        adresy = adresDao.getAll();     // przekaż wszystkie adresy do tablicy
+        
+        DefaultListModel adresModel = new DefaultListModel();   // ponieważ JList nie może brać danych z typu ArrayList, musimy przekonwertować
+        for (Adres adres : adresy) {
+            adresModel.addElement("Miasto: " + adres.getMiasto() + ", kod pocztowy: " + adres.getKodPocztowy() + ", ulica: " + adres.getUlica() + ", numer budynku: " + adres.getNrBudynku() + ", numer lokalu: " + adres.getNrLokalu());
+        }
+        
+        adresList.setModel(adresModel);  //  ustaw otrzymane adresy w tablicy do listy
+        size = adresList.getPreferredSize();
+        adresList.setBounds(600, 170, 550, size.height);
+        this.add(adresList);
+        
+        adresList.addListSelectionListener(new ListSelectionListener() {     // wybrany adres przypisz do zamówienia
             @Override
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Dodano adres do listy adresów.", "", JOptionPane.INFORMATION_MESSAGE);
+            public void valueChanged(ListSelectionEvent e) {    // kiedy użytkownik wybierze coś z listy 
+                
             }
         });
         
-        JComboBox<String> list = new JComboBox<String>();
-        list.addItem("Adres 1");    // tutaj trzeba będzie zmienić aby brało adresy z bazy
-        list.addItem("Adres 2");
-        size = list.getPreferredSize();
-        list.setBounds(150, 540, 300, size.height);
-        this.add(list);
-        
-        list.addItemListener(new ItemListener() {   // wybrany adres przypisz do zamówienia
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                System.out.println("wybrane");
-            }
-        });
-        
-        JLabel delivLabel = new JLabel("Wybierz sposób dostawy:");
+        JLabel delivLabel = new JLabel("Wybierz sposób realizacji:");   // wybranie sposobu realizacji zmienić na listę - która pobiera dane z tabeli sposobrealizacji (string sposReal, koszt, int czasWysylki, boolean wniesienie)
         delivLabel.setFont(new Font("sansserif", 1, 36));
         delivLabel.setForeground(Color.WHITE);
         size = delivLabel.getPreferredSize();
-        delivLabel.setBounds(150, 610, size.width, size.height);
+        delivLabel.setBounds(150, 510, size.width, size.height);
         this.add(delivLabel);
         
-        JRadioButton kurier = new JRadioButton("Kurier");
-        JRadioButton odbior = new JRadioButton("Odbiór osobisty");
-        kurier.setForeground(Color.WHITE);
-        odbior.setForeground(Color.WHITE);
-        ButtonGroup dostawa = new ButtonGroup();    // pilnuje aby tylko jedna opcja mogła być zaznaczona
-        dostawa.add(kurier);
-        dostawa.add(odbior);
-        size = kurier.getPreferredSize();
-        kurier.setBounds(150, 690, size.width, size.height);
-        size = odbior.getPreferredSize();
-        odbior.setBounds(150, 730, size.width, size.height);
-        this.add(kurier);
-        this.add(odbior);
         
-        kurier.addActionListener(new ActionListener() {     // kurier jako wybrany sposób dostawy dodaj do zamówienia
+        JList<String> realizacjaList = new JList<String>();   // lista sposobów realizacji
+        //
+        //  Uzyskaj z bazy sposoby i wpisz je do tablicy sposobyRealizacji
+        //
+        SposobRealizacjiDao sposobRealizacjiDao = new SposobRealizacjiDao();
+        sposobyRealizacji = sposobRealizacjiDao.getAll();     // przekaż wszystkie sposoby do tablicy
+        
+        DefaultListModel sposobModel = new DefaultListModel();   // ponieważ JList nie może brać danych z typu ArrayList, musimy przekonwertować
+        for (SposobRealizacji sr : sposobyRealizacji) {
+            if("Odbiór osobisty".equals(sr.getSposReal())) {    // przy odbiorze osobistym nie trzeba pozostałych informacji
+                sposobModel.addElement(sr.getSposReal());
+            } 
+            else {
+                sposobModel.addElement(sr.getSposReal() + ", koszt: " + sr.getKoszt() + " zł, czas wysyłki: " + sr.getCzasWysylki() + " dni" + czyWniesienie(sr.isWniesienie()));
+            }
+            
+        }
+        
+        realizacjaList.setModel(sposobModel);  //  ustaw otrzymane sposoby w tablicy do listy
+        size = realizacjaList.getPreferredSize();
+        realizacjaList.setBounds(150, 600, 400, size.height);
+        this.add(realizacjaList);
+        
+        realizacjaList.addListSelectionListener(new ListSelectionListener() {     // wybrany sposob przypisz do zamówienia
             @Override
-            public void actionPerformed(ActionEvent e) {
-               System.out.println("wybrane"); 
+            public void valueChanged(ListSelectionEvent e) {    // kiedy użytkownik wybierze coś z listy 
+                
             }
         });
         
-        odbior.addActionListener(new ActionListener() {     // odbiór jako wybrany sposób dostawy dodaj do zamówienia
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("wybrane");
-            }
-        });
+        JLabel infoLabel = new JLabel("Uwagi do zamówienia:");   // użytkownik może wpisać swoje uwagi w textfield, informacje z niego są przypisywane do zamówienia
+        infoLabel.setFont(new Font("sansserif", 1, 36));
+        infoLabel.setForeground(Color.WHITE);
+        size = infoLabel.getPreferredSize();
+        infoLabel.setBounds(150, 710, size.width, size.height);
+        this.add(infoLabel);
         
+        //
+        // Tutaj textfield dodać
+        //
+        MyTextField uwagiField = new MyTextField();
+        uwagiField.setHint("Wpisz uwagi do zamówienia");
+        uwagiField.setBackground(Color.WHITE);
+        uwagiField.setBounds(150, 800, 770, 45);
+        this.add(uwagiField);
+
         Button orderButton = new Button();
         orderButton.setBackground(new Color(196, 53, 53));
         orderButton.setForeground(new Color(250, 250, 250));
         orderButton.setText("Złóż zamówienie");
-        orderButton.setBounds(150, 780, 180, 35);
+        orderButton.setBounds(150, 890, 180, 35);
         this.add(orderButton, "w 40%, h 40");
         
         orderButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {    // tutaj będzie trzeba dodać funkcjonalność związaną z dodaniem do listy zamówień danego zamówienia, powrót do widoku sklepu
+                
+                
+                //
+                // Jeśli wpisano nowy adres, dodaj go do listy adresów (if !którykolwiekAdresZListyKliknięty)
+                //
+                
+                //
+                // Jeśli nie wybrano adresu/nie wypełniono wszystkich pól adresu, nie wybrano sposobu realizacji zwróć popup
+                //
+//                if() {
+//                    JOptionPane.showMessageDialog(null, "Nie podano wszystkich informacji potrzebnych do złożenia zamówienia", "", JOptionPane.INFORMATION_MESSAGE);
+//                }
+                
+                
+                //
+                // Tutaj funkcjonalność dodania do listy zamówień danego zamówienia(
+                //
+                
                 JOptionPane.showMessageDialog(null, "Dodano zamówienie do listy zamówień.", "", JOptionPane.INFORMATION_MESSAGE);
+                MainFrame frame = (MainFrame) (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, (JComponent) e.getSource());  // zdobądź rodzica (czyli JFrame)
+                frame.returnToShop();
             }
         });
         
         Button backButton = new Button();
         backButton.setBackground(new Color(196, 53, 53));
         backButton.setForeground(new Color(250, 250, 250));
-        backButton.setText("Anuluj składanie zamówienia");
-        backButton.setBounds(350, 780, 200, 35);
+        backButton.setText("Wróć do koszyka");
+        backButton.setBounds(380, 890, 200, 35);
         this.add(backButton);
         
-        backButton.addActionListener(new ActionListener() {     // po naciśnięciu powrót do głównej strony sklepu
+        backButton.addActionListener(new ActionListener() {     // po naciśnięciu powrót do koszyka
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("wybrane");
+                MainFrame frame = (MainFrame) (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, (JComponent) e.getSource());  // zdobądź rodzica (czyli JFrame)
+                frame.returnToCart();
             }
         });
     }

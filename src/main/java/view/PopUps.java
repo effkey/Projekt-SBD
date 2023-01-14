@@ -114,4 +114,8 @@ public class PopUps {
     public void createAccountPopUp() {
         JOptionPane.showMessageDialog(null, "Utworzono konto", "", JOptionPane.INFORMATION_MESSAGE);
     }
+    
+    public void notEnoughOrderInfo() {
+        JOptionPane.showMessageDialog(null, "Nie podano wszystkich informacji potrzebnych do złożenia zamówienia", "", JOptionPane.INFORMATION_MESSAGE);
+    }
 }
