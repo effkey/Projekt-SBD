@@ -1,20 +1,19 @@
 package view.SacPackage;
 
-
 import java.awt.Toolkit;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import map.Uzytkownik;
+import map.Zamowienie;
 import view.MainFrame;
-
-
-
+import dao.UzytkownikDao;
+import java.util.Date;
+import dao.DAO;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-
 /**
  *
  * @author kubpi
@@ -25,11 +24,19 @@ public class UzytForm extends javax.swing.JPanel {
      * Creates new form UzytForm
      */
     Uzytkownik uzytkownik;
+   Uzytkownik uzytkownik1;
+    Zamowienie zamowienie;
+    String text_imie;
+    String text_nazwisko;
+    String text_nick;
+    String text_haslo;
     
-    
+
     public UzytForm(Uzytkownik user) {
-        this.uzytkownik=user;
+        this.uzytkownik = user;
         initComponents();
+        startProgram();
+        
     }
 
     /**
@@ -136,13 +143,13 @@ public class UzytForm extends javax.swing.JPanel {
 
         lData.setFont(new java.awt.Font("Sitka Text", 1, 24)); // NOI18N
         lData.setForeground(new java.awt.Color(255, 255, 255));
-        lData.setText("TU BEDZIE WYÅšWIETLANA DATA");
+        lData.setText("TU BEDZIE WYŒWIETLANA DATA");
 
         lImie.setFont(new java.awt.Font("Sitka Text", 1, 24)); // NOI18N
         lImie.setForeground(new java.awt.Color(255, 255, 255));
-        lImie.setText("TU BÄ˜DZIE WYÅšWIETLANE IMIE");
+        lImie.setText("TU BÊDZIE WYŒWIETLANE IMIE");
 
-        buttonZmienNazwisko.setText("ZmieÅ„");
+        buttonZmienNazwisko.setText("Zmieñ");
         buttonZmienNazwisko.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonZmienNazwiskoActionPerformed(evt);
@@ -151,7 +158,7 @@ public class UzytForm extends javax.swing.JPanel {
 
         lNazwisko.setFont(new java.awt.Font("Sitka Text", 1, 24)); // NOI18N
         lNazwisko.setForeground(new java.awt.Color(255, 255, 255));
-        lNazwisko.setText("TU BÄ˜DZIE WYÅšWIETLANE NAZWISKO");
+        lNazwisko.setText("TU BÊDZIE WYŒWIETLANE NAZWISKO");
 
         jLabel10.setFont(new java.awt.Font("Sitka Text", 1, 24)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(255, 255, 255));
@@ -166,23 +173,23 @@ public class UzytForm extends javax.swing.JPanel {
 
         jLabel5.setFont(new java.awt.Font("Sitka Text", 1, 24)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setText("HasÅ‚o:");
+        jLabel5.setText("Has³o:");
 
-        buttonZmienHaslo.setText("ZmieÅ„");
+        buttonZmienHaslo.setText("Zmieñ");
         buttonZmienHaslo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonZmienHasloActionPerformed(evt);
             }
         });
 
-        buttonZmienNick.setText("ZmieÅ„");
+        buttonZmienNick.setText("Zmieñ");
         buttonZmienNick.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonZmienNickActionPerformed(evt);
             }
         });
 
-        buttonZmienImie.setText("ZmieÅ„");
+        buttonZmienImie.setText("Zmieñ");
         buttonZmienImie.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonZmienImieActionPerformed(evt);
@@ -191,7 +198,7 @@ public class UzytForm extends javax.swing.JPanel {
 
         lNick.setFont(new java.awt.Font("Sitka Text", 1, 24)); // NOI18N
         lNick.setForeground(new java.awt.Color(255, 255, 255));
-        lNick.setText("TU BÄ˜DZIE WYÅšWIETLANY NICK");
+        lNick.setText("TU BÊDZIE WYŒWIETLANY NICK");
 
         jLabel6.setFont(new java.awt.Font("Sitka Text", 1, 24)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
@@ -290,12 +297,12 @@ public class UzytForm extends javax.swing.JPanel {
                 .addGap(105, 105, 105))
         );
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Lista zÅ‚oÅ¼onych zamÃ³wieÅ„", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Sitka Heading", 1, 24))); // NOI18N
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Lista z³o¿onych zamówieñ", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Sitka Heading", 1, 24))); // NOI18N
         jPanel4.setOpaque(false);
 
         jLabel7.setFont(new java.awt.Font("Sitka Text", 1, 24)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel7.setText("Wybierz zamÃ³wienie:");
+        jLabel7.setText("Wybierz zamówienie:");
 
         jList1.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -304,7 +311,7 @@ public class UzytForm extends javax.swing.JPanel {
         });
         jScrollPane2.setViewportView(jList1);
 
-        zobaczSzczegolyButton.setText("Zobacz szczegÃ³Å‚y");
+        zobaczSzczegolyButton.setText("Zobacz szczegó³y");
         zobaczSzczegolyButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 zobaczSzczegolyButtonActionPerformed(evt);
@@ -369,7 +376,7 @@ public class UzytForm extends javax.swing.JPanel {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(47, 47, 47)
                         .addComponent(powrotButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(110, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -379,46 +386,75 @@ public class UzytForm extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(903, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addGap(0, 496, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+
     private void tfwpisznazwiskoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfwpisznazwiskoActionPerformed
-        // TODO add your handling code here:
+ 
+        
+        text_nazwisko = tfwpisznazwisko.getText();
+        
+
     }//GEN-LAST:event_tfwpisznazwiskoActionPerformed
 
     private void tfwpiszimieActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfwpiszimieActionPerformed
-        // TODO add your handling code here:
+       
+        text_imie = tfwpiszimie.getText();
+        
     }//GEN-LAST:event_tfwpiszimieActionPerformed
 
     private void tfwpiszhasloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfwpiszhasloActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_tfwpiszhasloActionPerformed
 
     private void buttonZmienNazwiskoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonZmienNazwiskoActionPerformed
-        // TODO add your handling code here:
+        tfwpisznazwiskoActionPerformed(evt);
+        
+        System.out.println("nazwisko" + text_nazwisko);
+
+      
+         
+            lNazwisko.setText(text_nazwisko);
+        
+        
     }//GEN-LAST:event_buttonZmienNazwiskoActionPerformed
 
     private void tfwpisznickActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfwpisznickActionPerformed
-        // TODO add your handling code here:
+        text_nick = tfwpisznick.getText();
     }//GEN-LAST:event_tfwpisznickActionPerformed
 
     private void buttonZmienHasloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonZmienHasloActionPerformed
-        // TODO add your handling code here:
+        uzytkownik.setPassword(text_haslo);
     }//GEN-LAST:event_buttonZmienHasloActionPerformed
 
     private void buttonZmienNickActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonZmienNickActionPerformed
-        // TODO add your handling code here:
+        tfwpisznickActionPerformed(evt);
+        
+        System.out.println("nick" + text_nick);
+        
+            
+            lNick.setText(text_nick);
+        
+        
     }//GEN-LAST:event_buttonZmienNickActionPerformed
 
     private void buttonZmienImieActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonZmienImieActionPerformed
-        // TODO add your handling code here:
+        tfwpiszimieActionPerformed(evt);
+       
+        System.out.println("imie" + text_imie);
+       
+           
+                    lImie.setText(text_imie);
+        
+        
     }//GEN-LAST:event_buttonZmienImieActionPerformed
 
     private void zobaczSzczegolyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zobaczSzczegolyButtonActionPerformed
@@ -428,7 +464,29 @@ public class UzytForm extends javax.swing.JPanel {
     }//GEN-LAST:event_zobaczSzczegolyButtonActionPerformed
 
     private void zapiszButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zapiszButtonActionPerformed
-        // TODO add your handling code here:
+       
+         int id = uzytkownik.getIdUzytkownika();
+         
+         UzytkownikDao uzytkownikDao = new UzytkownikDao();
+          uzytkownik1 = uzytkownikDao.getById(Long.valueOf(id));
+          System.out.println("Przed wywolaniem funkcji zmieniajacych" + uzytkownik1.getImie());
+          System.out.println("TO IMIE DO ZMIENIEA" + text_imie);
+          
+          
+          buttonZmienImieActionPerformed(evt);
+        buttonZmienNazwiskoActionPerformed(evt);
+        buttonZmienNickActionPerformed(evt);
+        buttonZmienHasloActionPerformed(evt);
+        
+          uzytkownik1.setImie(text_imie);
+          uzytkownik1.setNazwisko(text_nazwisko);
+          uzytkownik1.setPassword(text_haslo);
+          uzytkownik1.setNickname(text_nick);
+         
+        
+        System.out.println( "to jest uzytkownik1 - zmieniony" + uzytkownik1.getImie());
+        uzytkownikDao.update(uzytkownik1);
+        
     }//GEN-LAST:event_zapiszButtonActionPerformed
 
     private void powrotButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_powrotButtonActionPerformed
@@ -437,6 +495,23 @@ public class UzytForm extends javax.swing.JPanel {
     }//GEN-LAST:event_powrotButtonActionPerformed
 
 
+     private void Jlist(){
+//        ustawia zamówienia na liœcie
+
+//         model = zamowienie.getIdZamowienia();
+//        jList1.setModel((ListModel model);
+
+//        po kliknieciu zrob cos - nwm czy potrzebne
+//        jList1.addListSelectionListener(e -> {
+//            if (!e.getValueIsAdjusting()) {
+//                // Get the selected item from the JList
+//                Zamowienie selectedItem = jList1.getSelectedValue();
+//                // Do something with the selected item
+//
+//                System.out.println("Selected Item: " + selectedItem.getIdZamowienia() + " with ID: " + selectedItem.getAdres());
+//            }
+//        });
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonZmienHaslo;
     private javax.swing.JButton buttonZmienImie;
@@ -467,4 +542,20 @@ public class UzytForm extends javax.swing.JPanel {
     private javax.swing.JButton zapiszButton;
     private javax.swing.JButton zobaczSzczegolyButton;
     // End of variables declaration//GEN-END:variables
+
+    private void startProgram() {
+
+        tfwpiszimie.setText("");
+        tfwpiszhaslo.setText("");
+        tfwpiszimie.setText("");
+        tfwpisznazwisko.setText("");
+        tfwpisznick.setText("");
+
+        lData.setText(String.valueOf(uzytkownik.getDataZalozeniaKonta()));
+        lImie.setText(uzytkownik.getImie());
+        lNazwisko.setText(uzytkownik.getNazwisko());
+        lNick.setText(uzytkownik.getNickname());
+
+    }
+
 }
